@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,5 +47,11 @@ public class MainActivity extends AppCompatActivity {
         TimerRowsAdapter timerRowsAdapter = new TimerRowsAdapter();
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(timerRowsAdapter);
+    }
+
+    public void timerNameSet(EditText view)
+    {
+        EditText timerName = findViewById(R.id.editText);
+
     }
 }
