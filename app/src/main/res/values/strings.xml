@@ -2,4 +2,5 @@
     <string name="app_name">MultipleTimerFinal</string>
     <string name="timeRemaining">00:00</string> <!--place holder-->
     <string name="startStopButton" />
+    <string name="title_activity_main">MainActivity</string>
 </resources>
