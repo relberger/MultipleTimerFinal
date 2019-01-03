@@ -9,6 +9,7 @@ public class Countdown {
     private Timer timer;
     private String label;
     private boolean running;
+    private String remainingTimeString;
 
     Countdown(long time, String label, boolean running) {
         this.timer = new Timer();
@@ -24,6 +25,7 @@ public class Countdown {
                 if(remainingTime >= 0){
                     //clock.setText(getRemainingTimeString());
                     remainingTime = remainingTime - 1000;
+                    timeToString();
                 }else {
                     timer.cancel();
                 }
@@ -32,10 +34,34 @@ public class Countdown {
         timer.schedule(decrement, 50, 1000);
     }
 
-    String getRemainingTimeString() {
+    private void timeToString(){
         long hour = remainingTime / 3_600_000;
         long min = remainingTime % hour;
         long sec = remainingTime % min / 1000;
-        return String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, min, sec);
+        remainingTimeString = String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, min, sec);
+    }
+
+    public String getRemainingTimeString() {
+        return remainingTimeString;
+    }
+
+    public void setRemainingTimeString(String remainingTimeString) {
+        this.remainingTimeString = remainingTimeString;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }
