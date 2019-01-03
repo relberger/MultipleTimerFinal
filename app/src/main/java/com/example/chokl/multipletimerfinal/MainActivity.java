@@ -2,14 +2,27 @@ package com.example.chokl.multipletimerfinal;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setupTimers();
+    }
+
+    public void setupTimers()
+    {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        TimerRowsAdapter timerRowsAdapter = new TimerRowsAdapter();
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(timerRowsAdapter);
     }
 }
