@@ -10,10 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
+    private TimerRowsAdapter timerRowsAdapter = new TimerRowsAdapter();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupToolbar();
@@ -23,18 +26,20 @@ public class MainActivity extends AppCompatActivity {
         setupTimers();
     }
 
-    private void setupToolbar() {
+    private void setupToolbar()
+    {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
-    private void setupFAB() {
+    private void setupFAB()
+    {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View view)
+            {createNewCountdown(view);
             }
         });
     }
@@ -43,15 +48,22 @@ public class MainActivity extends AppCompatActivity {
     {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        TimerRowsAdapter timerRowsAdapter = new TimerRowsAdapter();
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(timerRowsAdapter);
     }
 
-    public void timerNameSet(EditText view)
+    public void createNewCountdown(View view)
+    {
+        //Countdown countdown = new Countdown();
+        timerNameSet(view);
+    }
+
+    public void timerNameSet(View view)
     {
         EditText timerName = findViewById(R.id.editText);
-
+        //timerRowsAdapter.getmTimers().length;
     }
 }
