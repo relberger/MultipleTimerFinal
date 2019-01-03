@@ -9,12 +9,12 @@ import android.widget.LinearLayout;
 
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
 {
-    private boolean [] mTimers;
+    private Countdown [] mTimers;
     private int numTimers = 1; //increment when user creates new timer
 
     public TimerRowsAdapter()
     {
-        mTimers = new boolean[numTimers];
+        mTimers = new Countdown[numTimers];
     }
 
     @NonNull
