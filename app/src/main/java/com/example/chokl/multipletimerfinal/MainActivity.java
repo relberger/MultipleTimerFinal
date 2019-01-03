@@ -2,13 +2,13 @@ package com.example.chokl.multipletimerfinal;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity
         {
             @Override
             public void onClick(View view)
-            {createNewCountdown(view);
+            {
+                createNewCountdown(view);
             }
         });
     }
@@ -57,13 +58,40 @@ public class MainActivity extends AppCompatActivity
 
     public void createNewCountdown(View view)
     {
-        //Countdown countdown = new Countdown();
-        timerNameSet(view);
+        Countdown countdown = new Countdown();
+        updateCountdown(countdown);
     }
 
-    public void timerNameSet(View view)
+    private void updateCountdown(Countdown countdown)
+    {
+        timerNameSet(countdown);
+        timerTimeSet(countdown);
+        startStopTimer(countdown);
+    }
+
+    public void timerNameSet(Countdown countdown)
     {
         EditText timerName = findViewById(R.id.editText);
-        //timerRowsAdapter.getmTimers().length;
+        countdown.setLabel(timerName.getText().toString());
+        timerName.setFocusable(false);
+        timerName.setFocusableInTouchMode(true);
+    }
+
+    private void timerTimeSet(Countdown countdown)
+    {
+    }
+
+    public void startStopTimer(Countdown countdown)
+    {
+        ToggleButton startStopButton = findViewById(R.id.startStopButton);
+
+        if (startStopButton.isChecked())
+        {
+            countdown.runTimer();
+        }
+        else if (!startStopButton.isChecked())
+        {
+            countdown.setRunning(false);
+        }
     }
 }

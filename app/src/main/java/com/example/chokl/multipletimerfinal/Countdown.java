@@ -4,29 +4,34 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Countdown {
+public class Countdown
+{
     private long remainingTime;
     private Timer timer;
     private String label;
     private boolean running;
     private String remainingTimeString;
 
-    Countdown(long time, String label, boolean running) {
+    Countdown()
+    {
         this.timer = new Timer();
-        remainingTime = time;
-        this.label = label;
-        this.running = running;
     }
 
-    void runTimer() {
-        TimerTask decrement = new TimerTask() {
+    void runTimer()
+    {
+        TimerTask decrement = new TimerTask()
+        {
             @Override
-            public void run() {
-                if(remainingTime >= 0){
+            public void run()
+            {
+                if (remainingTime >= 0)
+                {
                     //clock.setText(getRemainingTimeString());
                     remainingTime = remainingTime - 1000;
                     timeToString();
-                }else {
+                }
+                else
+                {
                     timer.cancel();
                 }
             }
@@ -34,34 +39,41 @@ public class Countdown {
         timer.schedule(decrement, 50, 1000);
     }
 
-    private void timeToString(){
+    private void timeToString()
+    {
         long hour = remainingTime / 3_600_000;
         long min = remainingTime % hour;
         long sec = remainingTime % min / 1000;
-        remainingTimeString = String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, min, sec);
+        remainingTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, min, sec);
     }
 
-    public String getRemainingTimeString() {
+    public String getRemainingTimeString()
+    {
         return remainingTimeString;
     }
 
-    public void setRemainingTimeString(String remainingTimeString) {
+    public void setRemainingTimeString(String remainingTimeString)
+    {
         this.remainingTimeString = remainingTimeString;
     }
 
-    public String getLabel() {
+    public String getLabel()
+    {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label)
+    {
         this.label = label;
     }
 
-    public boolean isRunning() {
+    public boolean isRunning()
+    {
         return running;
     }
 
-    public void setRunning(boolean running) {
+    public void setRunning(boolean running)
+    {
         this.running = running;
     }
 }
