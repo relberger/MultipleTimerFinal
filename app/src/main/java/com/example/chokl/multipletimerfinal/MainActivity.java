@@ -12,7 +12,7 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity
 {
-    private TimerRowsAdapter timerRowsAdapter = new TimerRowsAdapter();
+    private TimerRowsAdapter timerRowsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+        timerRowsAdapter = new TimerRowsAdapter(1);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity
 
     public void createNewCountdown(View view)
     {
+        timerRowsAdapter.setNumTimers(timerRowsAdapter.getNumTimers() + 1);
+        timerRowsAdapter.notifyDataSetChanged();
         Countdown countdown = new Countdown();
         updateCountdown(countdown);
     }
