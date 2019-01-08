@@ -13,6 +13,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
+
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder> {
     private static OIClickListener sOIClickListener = new OIClickListener() {
         @Override
@@ -36,13 +38,13 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         }
     };
 
-    private Countdown[] mTimers;
+    private ArrayList<Countdown>mTimers;
     private int numTimers; //increment when user creates new timer
 
 
     public TimerRowsAdapter(int numTimers) {
         this.numTimers = numTimers;
-        mTimers = new Countdown[numTimers];
+        mTimers = new ArrayList<>();
     }
 
     @NonNull
@@ -61,7 +63,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
 
     private void updateTimer(ViewHolder viewHolder, int position) {
 
-        Countdown currentTimer = mTimers[position];
+        Countdown currentTimer = mTimers.get(position);
         if(currentTimer != null){
         if(currentTimer.getLabel() != null){
             viewHolder.tv_timerLabel.setText(currentTimer.getLabel());
@@ -76,11 +78,11 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         return numTimers;
     }
 
-    public Countdown[] getmTimers() {
+    public ArrayList<Countdown> getmTimers() {
         return mTimers;
     }
 
-    public void setmTimers(Countdown[] mTimers) {
+    public void setmTimers(ArrayList<Countdown> mTimers) {
         this.mTimers = mTimers;
     }
 

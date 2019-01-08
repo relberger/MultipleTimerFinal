@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         mTimerRowsAdapter.notifyDataSetChanged();
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
+        mTimerRowsAdapter.setmTimers(countdowns);
         updateCountdown(countdown);
     }
 
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLabelClick(int position, View view) {
             try {
-                inputLabel(mTimerRowsAdapter.getmTimers()[position]);
+                inputLabel(mTimerRowsAdapter.getmTimers().get(position));
             } catch (Exception e) {
                 Log.d("STACK", "Label Crashed: " + e.getMessage());
             }
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onTimeClick(int position, View view) {
             try {
-                inputTime(mTimerRowsAdapter.getmTimers()[position]);
+                inputTime(mTimerRowsAdapter.getmTimers().get(position));
             } catch (Exception e) {
                 Log.d("STACK", "Time Crashed: " + e.getMessage());
             }
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onToggleClick(int position, View view) {
             try {
-                startStopTimer(mTimerRowsAdapter.getmTimers()[position]);
+                startStopTimer(mTimerRowsAdapter.getmTimers().get(position));
             } catch (Exception e) {
                 Log.d("STACK", "Toggle Crashed: " + e.getMessage());
             }
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResetClick(int position, View v) {
             try {
-                resetTimer(mTimerRowsAdapter.getmTimers()[position]);
+                resetTimer(mTimerRowsAdapter.getmTimers().get(position));
             } catch (Exception e) {
                 Log.d("STACK", "Reset Crashed: " + e.getMessage());
             }
