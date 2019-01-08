@@ -14,14 +14,14 @@
             android:layout_height="wrap_content"
             android:ems="8"
             android:onClick="inputLabel"
-            android:text="Enter timer name"/>
+            android:text="Enter timer name" />
 
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/timeRemaining"
-            android:onClick="inputTime"/>
+            android:onClick="inputTime"
+            android:text="@string/timeRemaining" />
 
         <ToggleButton
             android:id="@+id/startStopButton"
