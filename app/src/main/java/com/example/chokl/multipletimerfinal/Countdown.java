@@ -27,7 +27,7 @@ public class Countdown
                 if (remainingTime >= 0)
                 {
                     //clock.setText(getRemainingTimeString());
-                    remainingTime = remainingTime - 1000;
+                    remainingTime = remainingTime - 1_000;
                     timeToString();
                 }
                 else
@@ -36,14 +36,14 @@ public class Countdown
                 }
             }
         };
-        timer.schedule(decrement, 50, 1000);
+        timer.schedule(decrement, 50, 1_000);
     }
 
     private void timeToString()
     {
         long hour = remainingTime / 3_600_000;
         long min = remainingTime % hour;
-        long sec = remainingTime % min / 1000;
+        long sec = remainingTime % min / 1_000;
         remainingTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, min, sec);
     }
 
@@ -91,5 +91,17 @@ public class Countdown
     public void setRunning(boolean running)
     {
         this.running = running;
+    }
+
+    public void addHours(long hours) {
+        remainingTime = remainingTime + (hours * 3_600_000);
+    }
+
+    public void addMinutes(long minutes) {
+        remainingTime = remainingTime + (minutes * 60_000);
+    }
+
+    public void addSeconds(long seconds) {
+        remainingTime = remainingTime + (seconds * 1_000);
     }
 }

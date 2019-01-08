@@ -14,7 +14,27 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder> {
-    private static OIClickListener sOIClickListener;
+    private static OIClickListener sOIClickListener = new OIClickListener() {
+        @Override
+        public void onLabelClick(int position, View view) {
+
+        }
+
+        @Override
+        public void onTimeClick(int position, View view) {
+
+        }
+
+        @Override
+        public void onToggleClick(int position, View view) {
+
+        }
+
+        @Override
+        public void onResetClick(int position, View view) {
+
+        }
+    };
 
     private Countdown[] mTimers;
     private int numTimers; //increment when user creates new timer

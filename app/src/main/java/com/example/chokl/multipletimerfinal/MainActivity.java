@@ -23,13 +23,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private TimerRowsAdapter mTimerRowsAdapter;
 
-    private ArrayList<Countdown> countdowns = new ArrayList<>() ;
+    private ArrayList<Countdown> countdowns = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +60,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.deleteAllTimers:
                 countdowns.clear();
                 Countdown countdown = new Countdown();
@@ -92,13 +90,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void toggleMenuItem(MenuItem item)
-    {
+    private void toggleMenuItem(MenuItem item) {
         item.setChecked(!item.isChecked());
     }
 
-    public void setupTimers()
-    {
+    public void setupTimers() {
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
 
@@ -152,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void resetTimer(Countdown countdown){
-       countdown.setRemainingTime(0);
+    private void resetTimer(Countdown countdown) {
+        countdown.setRemainingTime(0);
     }
 
 
@@ -187,15 +183,13 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     private final TimerRowsAdapter.OIClickListener
-            listener = new TimerRowsAdapter.OIClickListener ()
-    {
+            listener = new TimerRowsAdapter.OIClickListener() {
         @Override
         public void onLabelClick(int position, View view) {
             try {
                 inputLabel(mTimerRowsAdapter.getmTimers()[position]);
-            }
-            catch (Exception e) {
-                Log.d ("STACK", "Label Crashed: " + e.getMessage ());
+            } catch (Exception e) {
+                Log.d("STACK", "Label Crashed: " + e.getMessage());
             }
         }
 
@@ -203,20 +197,17 @@ public class MainActivity extends AppCompatActivity {
         public void onTimeClick(int position, View view) {
             try {
                 inputTime(mTimerRowsAdapter.getmTimers()[position]);
-            }
-            catch (Exception e) {
-                Log.d ("STACK", "Time Crashed: " + e.getMessage ());
+            } catch (Exception e) {
+                Log.d("STACK", "Time Crashed: " + e.getMessage());
             }
         }
 
         @Override
-        public void onToggleClick (int position, View view)
-        {
+        public void onToggleClick(int position, View view) {
             try {
                 startStopTimer(mTimerRowsAdapter.getmTimers()[position]);
-            }
-            catch (Exception e) {
-                Log.d ("STACK", "Toggle Crashed: " + e.getMessage ());
+            } catch (Exception e) {
+                Log.d("STACK", "Toggle Crashed: " + e.getMessage());
             }
         }
 
@@ -224,16 +215,14 @@ public class MainActivity extends AppCompatActivity {
         public void onResetClick(int position, View v) {
             try {
                 resetTimer(mTimerRowsAdapter.getmTimers()[position]);
-            }
-            catch (Exception e) {
-                Log.d ("STACK", "Reset Crashed: " + e.getMessage ());
+            } catch (Exception e) {
+                Log.d("STACK", "Reset Crashed: " + e.getMessage());
             }
         }
 
     };
 
-    public void inputLabel(Countdown cd)
-    {
+    public void inputLabel(Countdown cd) {
         final Countdown countdown = cd;
 
         AlertDialog.Builder inputLabelAlert = new AlertDialog.Builder(this);
@@ -244,22 +233,19 @@ public class MainActivity extends AppCompatActivity {
 
         inputLabelAlert.setView(labelInput);
 
-        inputLabelAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
+        inputLabelAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 countdown.setLabel(labelInput.getText().toString());
                 //TextView label = findViewById(R.id.timerLabel);
-               //label.setText(labelInput.getText().toString());
+                //label.setText(labelInput.getText().toString());
             }
         });
 
         inputLabelAlert.show();
     }
 
-    public void inputTime(Countdown cd)
-    {
+    public void inputTime(Countdown cd) {
         final Countdown countdown = cd;
 
         AlertDialog.Builder inputTimeAlert = new AlertDialog.Builder(this);
@@ -295,91 +281,73 @@ public class MainActivity extends AppCompatActivity {
 
         inputTimeAlert.setView(layout);
 
-        inputTimeAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
+        inputTimeAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(DialogInterface dialog, int which) {
                 String hours = "00";
-                if (!timeHoursInput.getText().toString().isEmpty())
-                {
-                    if (timeHoursInput.getText().toString().length() == 1)
-                    {
+                if (!timeHoursInput.getText().toString().isEmpty()) {
+                    if (timeHoursInput.getText().toString().length() == 1) {
                         hours = "0" + timeHoursInput.getText().toString();
-                    }
-                    else
-                    {
+                    } else {
                         hours = timeHoursInput.getText().toString();
                     }
+                    countdown.addHours(Long.parseLong(timeHoursInput.getText().toString()));
                 }
                 String minutes = "00";
-                if (!timeMinutesInput.getText().toString().isEmpty())
-                {
-                    if (timeMinutesInput.getText().toString().length() == 1)
-                    {
+                if (!timeMinutesInput.getText().toString().isEmpty()) {
+                    if (timeMinutesInput.getText().toString().length() == 1) {
                         minutes = "0" + timeMinutesInput.getText().toString();
-                    }
-                    else
-                    {
+                    } else {
                         minutes = timeMinutesInput.getText().toString();
                     }
+                    countdown.addMinutes(Long.parseLong(timeHoursInput.getText().toString()));
                 }
                 String seconds = "00";
-                if (!timeSecondsInput.getText().toString().isEmpty())
-                {
-                    if (timeSecondsInput.getText().toString().length() == 1)
-                    {
+                if (!timeSecondsInput.getText().toString().isEmpty()) {
+                    if (timeSecondsInput.getText().toString().length() == 1) {
                         seconds = "0" + timeSecondsInput.getText().toString();
-                    }
-                    else
-                    {
+                    } else {
                         seconds = timeSecondsInput.getText().toString();
                     }
+                    countdown.addSeconds(Long.parseLong(timeHoursInput.getText().toString()));
                 }
 
-                countdown.setRemainingTimeString(hours + minutes + seconds);
-               // TextView time = findViewById(R.id.time);
-               // time.setText(hours + ":" + minutes + ":" + seconds);
-               // startStopTimer(countdown);
+                countdown.setRemainingTimeString(hours + ":" + minutes + ":" + seconds);
+                // TextView time = findViewById(R.id.time);
+                // time.setText(hours + ":" + minutes + ":" + seconds);
+                // startStopTimer(countdown);
             }
         });
 
         inputTimeAlert.show();
     }
-    public class InputFilterMinMax implements InputFilter
-    {
+
+    public class InputFilterMinMax implements InputFilter {
         //input filter taken from https://acomputerengineer.wordpress.com/2015/12/16/limit-number-range-in-edittext-in-android-using-inputfilter/
 
         private int min, max;
 
-        public InputFilterMinMax(int min, int max)
-        {
+        public InputFilterMinMax(int min, int max) {
             this.min = min;
             this.max = max;
         }
 
-        public InputFilterMinMax(String min, String max)
-        {
+        public InputFilterMinMax(String min, String max) {
             this.min = Integer.parseInt(min);
             this.max = Integer.parseInt(max);
         }
 
-        private boolean isInRange(int a, int b, int c)
-        {
+        private boolean isInRange(int a, int b, int c) {
             return b > a ? c >= a && c <= b : c >= b && c <= a;
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
-        {
-            try
-            {
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            try {
                 int input = Integer.parseInt(dest.toString() + source.toString());
                 if (isInRange(min, max, input))
                     return null;
-            }
-            catch (NumberFormatException nfe)
-            {
+            } catch (NumberFormatException nfe) {
             }
             return "";
         }
