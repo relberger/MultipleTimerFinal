@@ -13,23 +13,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
-{
+public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder> {
+    private static OIClickListener sOIClickListener;
 
-    private Countdown [] mTimers;
+    private Countdown[] mTimers;
     private int numTimers = 1; //increment when user creates new timer
 
 
-    public TimerRowsAdapter(int numTimers)
-    {
+    public TimerRowsAdapter(int numTimers) {
         this.numTimers = numTimers;
         mTimers = new Countdown[numTimers];
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position)
-    {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View itemLayoutView = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.rv_item, viewGroup, false);
 
@@ -37,58 +35,82 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position)
-    {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         updateTimer(viewHolder, position);
     }
 
     private void updateTimer(ViewHolder viewHolder, int position) {
-        viewHolder.tv_timerLabel.setText(mTimers[position].getLabel());
-        viewHolder.tv_timeString.setText(mTimers[position].getRemainingTimeString());
+
+        Countdown currentTimer = mTimers[position];
+        if(!currentTimer.getLabel().isEmpty()){
+            viewHolder.tv_timerLabel.setText(currentTimer.getLabel());
+        }
+        if(currentTimer.getRemainingTime() != 0){
+            viewHolder.tv_timeString.setText(currentTimer.getRemainingTimeString());
+        }
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return numTimers;
     }
 
-    public Countdown[] getmTimers()
-    {
+    public Countdown[] getmTimers() {
         return mTimers;
     }
 
-    public void setmTimers(Countdown[] mTimers)
-    {
+    public void setmTimers(Countdown[] mTimers) {
         this.mTimers = mTimers;
     }
 
-    public int getNumTimers()
-    {
+    public int getNumTimers() {
         return numTimers;
     }
 
-    public void setNumTimers(int numTimers)
-    {
+    public void setNumTimers(int numTimers) {
         this.numTimers = numTimers;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
-        private LinearLayout mLinearLayout;
-        private TextView tv_timerLabel, tv_timeString;
-        private ToggleButton tb_startStop;
-        private Button b_reset;
-        public ViewHolder(@NonNull View itemView)
-        {
-            super(itemView);
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        LinearLayout mLinearLayout;
+        TextView tv_timerLabel, tv_timeString;
+        ToggleButton tb_startStop;
+        Button b_reset;
+
+        public ViewHolder(View itemLayoutView) {
+            super(itemLayoutView);
             mLinearLayout = itemView.findViewById(R.id.linearLayout);
             tv_timerLabel = mLinearLayout.findViewById(R.id.timerLabel);
             tv_timeString = mLinearLayout.findViewById(R.id.timeString);
             tb_startStop = mLinearLayout.findViewById(R.id.startStopButton);
             b_reset = mLinearLayout.findViewById(R.id.resetButton);
+
+            tb_startStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sOIClickListener.onToggleClick(getAdapterPosition(), view);
+                }
+            });
+
+            b_reset.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sOIClickListener.onResetClick(getAdapterPosition(), view);
+                }
+            });
+
         }
+
+        @Override
+        public void onClick(View view) {
+        }
+
 
     }
 
+    @SuppressWarnings("UnusedParameters")
+    public interface OIClickListener {
+        void onToggleClick(int position, View v);
+        void onResetClick(int position, View v);
+    }
 }

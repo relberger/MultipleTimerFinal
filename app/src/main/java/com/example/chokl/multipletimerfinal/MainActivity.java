@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,11 +98,13 @@ public class MainActivity extends AppCompatActivity {
     {
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        mTimerRowsAdapter = new TimerRowsAdapter(mTimerRowsAdapter.getNumTimers());
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+
+        mTimerRowsAdapter = new TimerRowsAdapter(1);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mTimerRowsAdapter);
@@ -124,13 +127,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void timerNameSet(Countdown countdown) {
-        EditText timerName = findViewById(R.id.timerLabel);
-        countdown.setLabel(timerName.getText().toString());
-        timerName.setFocusable(false);
-        timerName.setFocusableInTouchMode(true);
+        EditText timerLabel = findViewById(R.id.timerLabel);
+        countdown.setLabel(timerLabel.getText().toString());
+        timerLabel.setFocusable(false);
+        timerLabel.setFocusableInTouchMode(true);
     }
 
     private void timerTimeSet(Countdown countdown) {
+        TextView  time = findViewById(R.id.timeString);
+        countdown.setRemainingTime(Long.parseLong(time.getText().toString()));
+        time.setFocusable(false);
     }
 
     public void startStopTimer(Countdown countdown) {
@@ -143,33 +149,66 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void resetTimer(Countdown countdown){
+       countdown.setRemainingTime(0);
+    }
+
+
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_main, menu);
 //        return true;
 //    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outstate) {
+//    @Override
+//    protected void onSaveInstanceState(Bundle outstate) {
+//
+//        super.onSaveInstanceState(outstate);
+//        outstate.putInt("NUM_TIMERS", mTimerRowsAdapter.getNumTimers());
+//        for (Countdown countdown : mTimerRowsAdapter.getmTimers()) {
+//            outstate.putLong("TIME_REMAINING", countdown.getRemainingTime());
+//            outstate.putString("LABEL", countdown.getLabel());
+//            outstate.putBoolean("RUNNING", countdown.isRunning());
+//        }
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        mTimerRowsAdapter.setNumTimers(savedInstanceState.getInt("NUM_TIMERS"));
+//
+//        for (int i = 0; i < mTimerRowsAdapter.getNumTimers(); i++ ){
+//
+//        }
+//
+//    }
 
-        super.onSaveInstanceState(outstate);
-        outstate.putInt("NUM_TIMERS", mTimerRowsAdapter.getNumTimers());
-        for (Countdown countdown : mTimerRowsAdapter.getmTimers()) {
-            outstate.putLong("TIME_REMAINING", countdown.getRemainingTime());
-            outstate.putString("LABEL", countdown.getLabel());
-            outstate.putBoolean("RUNNING", countdown.isRunning());
+    private final TimerRowsAdapter.OIClickListener
+            listener = new TimerRowsAdapter.OIClickListener ()
+    {
+        @Override
+        public void onToggleClick (int position, View view)
+        {
+            try {
+                startStopTimer(mTimerRowsAdapter.getmTimers()[position]);
+            }
+            catch (Exception e) {
+                Log.d ("STACK", "Toggle Crashed: " + e.getMessage ());
+                // No reason for it to crash but since it did...
+            }
         }
-    }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mTimerRowsAdapter.setNumTimers(savedInstanceState.getInt("NUM_TIMERS"));
-
-        for (int i = 0; i < mTimerRowsAdapter.getNumTimers(); i++ ){
-
+        @Override
+        public void onResetClick(int position, View v) {
+            try {
+                resetTimer(mTimerRowsAdapter.getmTimers()[position]);
+            }
+            catch (Exception e) {
+                Log.d ("STACK", "Reset Crashed: " + e.getMessage ());
+                // No reason for it to crash but since it did...
+            }
         }
 
-    }
+    };
 
 }
