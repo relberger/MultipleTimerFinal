@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -210,6 +211,7 @@ public class MainActivity extends AppCompatActivity
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
         layout.addView(timeHoursInput);
         layout.addView(colon1);
         layout.addView(timeMinutesInput);
