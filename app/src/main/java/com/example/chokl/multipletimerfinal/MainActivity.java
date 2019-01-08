@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity
                 countdown.setRemainingTimeString(hours + minutes + seconds);
                 TextView time = findViewById(R.id.time);
                 time.setText(hours + ":" + minutes + ":" + seconds);
+                startStopTimer(countdown);
             }
         });
 
