@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mTimerRowsAdapter);
 
-        timerTimeSet(countdown);//call other countdown updating methods too
+        //timerTimeSet(countdown);//call other countdown updating methods too
     }
 
     public void createNewCountdown(View view) {
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateCountdown(Countdown countdown) {
         timerNameSet(countdown);
-        timerTimeSet(countdown);
+        //timerTimeSet(countdown);
         startStopTimer(countdown);
     }
 
@@ -133,11 +133,11 @@ public class MainActivity extends AppCompatActivity {
         timerLabel.setFocusableInTouchMode(true);
     }
 
-    private void timerTimeSet(Countdown countdown) {
-        TextView  time = findViewById(R.id.timeString);
-        countdown.setRemainingTime(Long.parseLong(time.getText().toString()));
-        time.setFocusable(false);
-    }
+//    private void timerTimeSet(Countdown countdown) {
+//        TextView time = findViewById(R.id.timeString);
+//        countdown.setRemainingTime(Long.parseLong(time.getText().toString()));
+//        time.setFocusable(false);
+//    }
 
     public void startStopTimer(Countdown countdown) {
         ToggleButton startStopButton = findViewById(R.id.startStopButton);

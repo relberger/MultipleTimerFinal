@@ -17,7 +17,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     private static OIClickListener sOIClickListener;
 
     private Countdown[] mTimers;
-    private int numTimers = 1; //increment when user creates new timer
+    private int numTimers; //increment when user creates new timer
 
 
     public TimerRowsAdapter(int numTimers) {
@@ -42,12 +42,13 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     private void updateTimer(ViewHolder viewHolder, int position) {
 
         Countdown currentTimer = mTimers[position];
-        if(!currentTimer.getLabel().isEmpty()){
+        if(currentTimer != null){
+        if(currentTimer.getLabel() != null){
             viewHolder.tv_timerLabel.setText(currentTimer.getLabel());
         }
         if(currentTimer.getRemainingTime() != 0){
             viewHolder.tv_timeString.setText(currentTimer.getRemainingTimeString());
-        }
+        }}
     }
 
     @Override
