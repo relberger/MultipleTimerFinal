@@ -151,47 +151,4 @@ public class MainActivity extends AppCompatActivity
             countdown.setRunning(false);
         }
     }
-
-    /*@Override
-    protected void onSaveInstanceState (Bundle outState)
-    {
-        super.onSaveInstanceState (outState);
-
-        // save current game, which includes the piles from which we derive pile tops after restore
-        outState.putString ("timers", getJSONof (mCurrentGame));
-
-        // save each checkbox's status so that we can check off those boxes after restore
-        outState.putBooleanArray (mKeyCheckedPiles, mAdapter.getCheckedPiles ());
-    }
-
-    private String getJSONof (IDGame game)
-    {
-        Gson gson = new Gson();
-        return gson.toJson(game);
-    }*/
-
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        for (Countdown countdown : countdowns)
-        {
-            outState.putParcelable("countdowns", (Parcelable) countdowns);*//*
-            outState.putString("label", countdown.getLabel());
-            outState.putString("remaining time", countdown.getRemainingTimeString());
-            outState.putBoolean("remaining time", countdown.isRunning());*//*
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        ArrayList<? extends Countdown> savedCountdowns = getIntent().getParcelableArrayListExtra("countdowns");
-        countdowns.addAll(savedCountdowns);
-//        mObjGridGameAdapter.overwriteWinningNumber(savedInstanceState.getInt("WINNING_NUMBER"));
-//        mTurnsTaken = savedInstanceState.getInt("CURRENT_GUESSES") - 1;
-//        incrementGuessesCounterAndUpdateStatusBar();
-    }*/
 }
