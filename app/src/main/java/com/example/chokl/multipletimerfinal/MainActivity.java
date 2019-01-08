@@ -1,23 +1,24 @@
 package com.example.chokl.multipletimerfinal;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity
 
     public void timerNameSet(Countdown countdown)
     {
-        EditText timerName = findViewById(R.id.editText);
+        TextView timerName = findViewById(R.id.label);
         countdown.setLabel(timerName.getText().toString());
         timerName.setFocusable(false);
         timerName.setFocusableInTouchMode(true);
@@ -150,5 +151,35 @@ public class MainActivity extends AppCompatActivity
         {
             countdown.setRunning(false);
         }
+    }
+
+    public void inputLabel(View view)
+    {
+        final Countdown countdown = new Countdown();
+
+        AlertDialog.Builder inputAlert = new AlertDialog.Builder(this);
+        inputAlert.setTitle("Enter the timer name");
+
+        final EditText labelInput = new EditText(this);
+        labelInput.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        inputAlert.setView(labelInput);
+
+        inputAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                countdown.setLabel(labelInput.getText().toString());
+                TextView label = findViewById(R.id.label);
+                label.setText(labelInput.getText().toString());
+            }
+        });
+
+        inputAlert.show();
+    }
+
+    public void inputTime(View view)
+    {
     }
 }
