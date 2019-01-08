@@ -47,6 +47,22 @@ public class Countdown
         remainingTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, min, sec);
     }
 
+    public long getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(long remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
     public String getRemainingTimeString()
     {
         return remainingTimeString;
