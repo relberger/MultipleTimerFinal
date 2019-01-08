@@ -3,4 +3,7 @@
     <string name="timeRemaining">00:00</string> <!--place holder-->
     <string name="startStopButton" />
     <string name="title_activity_main">MainActivity</string>
+    <string name="deleteAll">Delete all timers</string>
+    <string name="about">Create multiple timers within the same app</string>
+    <string name="menuCheck">I don\'t know what we would want checkable?</string>
 </resources>
