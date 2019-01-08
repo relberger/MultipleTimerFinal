@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
         mTimerRowsAdapter = new TimerRowsAdapter(1);
+        mTimerRowsAdapter.setmTimers(countdowns);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mTimerRowsAdapter);
