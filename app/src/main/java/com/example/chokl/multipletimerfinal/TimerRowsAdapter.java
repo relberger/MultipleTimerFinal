@@ -86,6 +86,20 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
             tb_startStop = mLinearLayout.findViewById(R.id.startStopButton);
             b_reset = mLinearLayout.findViewById(R.id.resetButton);
 
+            tv_timerLabel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sOIClickListener.onLabelClick(getAdapterPosition(), view);
+                }
+            });
+
+            tv_timeString.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sOIClickListener.onTimeClick(getAdapterPosition(), view);
+                }
+            });
+
             tb_startStop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -111,7 +125,10 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
 
     @SuppressWarnings("UnusedParameters")
     public interface OIClickListener {
-        void onToggleClick(int position, View v);
-        void onResetClick(int position, View v);
+        void onLabelClick(int position, View view);
+        void onTimeClick(int position, View view);
+        void onToggleClick(int position, View view);
+        void onResetClick(int position, View view);
+
     }
 }

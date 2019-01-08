@@ -190,6 +190,26 @@ public class MainActivity extends AppCompatActivity {
             listener = new TimerRowsAdapter.OIClickListener ()
     {
         @Override
+        public void onLabelClick(int position, View view) {
+            try {
+                inputLabel(mTimerRowsAdapter.getmTimers()[position]);
+            }
+            catch (Exception e) {
+                Log.d ("STACK", "Label Crashed: " + e.getMessage ());
+            }
+        }
+
+        @Override
+        public void onTimeClick(int position, View view) {
+            try {
+                inputTime(mTimerRowsAdapter.getmTimers()[position]);
+            }
+            catch (Exception e) {
+                Log.d ("STACK", "Time Crashed: " + e.getMessage ());
+            }
+        }
+
+        @Override
         public void onToggleClick (int position, View view)
         {
             try {
@@ -197,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (Exception e) {
                 Log.d ("STACK", "Toggle Crashed: " + e.getMessage ());
-                // No reason for it to crash but since it did...
             }
         }
 
@@ -208,18 +227,17 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (Exception e) {
                 Log.d ("STACK", "Reset Crashed: " + e.getMessage ());
-                // No reason for it to crash but since it did...
             }
         }
 
     };
 
-    public void inputLabel(View view)
+    public void inputLabel(Countdown cd)
     {
-        final Countdown countdown = new Countdown();
+        final Countdown countdown = cd;
 
         AlertDialog.Builder inputLabelAlert = new AlertDialog.Builder(this);
-        inputLabelAlert.setTitle("Enter the timer name");
+        inputLabelAlert.setTitle(R.string.enterTimerName);
 
         final EditText labelInput = new EditText(this);
         labelInput.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -232,17 +250,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which)
             {
                 countdown.setLabel(labelInput.getText().toString());
-                TextView label = findViewById(R.id.timerLabel);
-                label.setText(labelInput.getText().toString());
+                //TextView label = findViewById(R.id.timerLabel);
+               //label.setText(labelInput.getText().toString());
             }
         });
 
         inputLabelAlert.show();
     }
 
-    public void inputTime(View view)
+    public void inputTime(Countdown cd)
     {
-        final Countdown countdown = new Countdown();
+        final Countdown countdown = cd;
 
         AlertDialog.Builder inputTimeAlert = new AlertDialog.Builder(this);
         inputTimeAlert.setTitle("Enter the time");
@@ -294,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
                         hours = timeHoursInput.getText().toString();
                     }
                 }
-
                 String minutes = "00";
                 if (!timeMinutesInput.getText().toString().isEmpty())
                 {
@@ -321,15 +338,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 countdown.setRemainingTimeString(hours + minutes + seconds);
-                TextView time = findViewById(R.id.time);
-                time.setText(hours + ":" + minutes + ":" + seconds);
-                startStopTimer(countdown);
+               // TextView time = findViewById(R.id.time);
+               // time.setText(hours + ":" + minutes + ":" + seconds);
+               // startStopTimer(countdown);
             }
         });
 
         inputTimeAlert.show();
     }
-
     public class InputFilterMinMax implements InputFilter
     {
         //input filter taken from https://acomputerengineer.wordpress.com/2015/12/16/limit-number-range-in-edittext-in-android-using-inputfilter/
