@@ -26,8 +26,12 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
-{
+
+import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getJSONof;
+import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getTimersFromJSON;
+
+public class MainActivity extends AppCompatActivity {
+
 
     private TimerRowsAdapter mTimerRowsAdapter;
 
@@ -173,8 +177,69 @@ public class MainActivity extends AppCompatActivity
         countdown.setRemainingTime(0);
     }
 
-    public void inputLabel(Countdown cd)
-    {
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outstate) {
+
+        super.onSaveInstanceState(outstate);
+        String currentObj = getJSONof(mTimerRowsAdapter);
+        outstate.putString("TIMERS", currentObj);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String currentObj = savedInstanceState.getString("TIMERS");
+        mTimerRowsAdapter = getTimersFromJSON(currentObj);
+    }
+
+    private final TimerRowsAdapter.OIClickListener
+            listener = new TimerRowsAdapter.OIClickListener() {
+        @Override
+        public void onLabelClick(int position, View view) {
+            try {
+                inputLabel(mTimerRowsAdapter.getmTimers().get(position));
+            } catch (Exception e) {
+                Log.d("STACK", "Label Crashed: " + e.getMessage());
+            }
+        }
+
+        @Override
+        public void onTimeClick(int position, View view) {
+            try {
+                inputTime(mTimerRowsAdapter.getmTimers().get(position));
+            } catch (Exception e) {
+                Log.d("STACK", "Time Crashed: " + e.getMessage());
+            }
+        }
+
+        @Override
+        public void onToggleClick(int position, View view) {
+            try {
+                startStopTimer(mTimerRowsAdapter.getmTimers().get(position));
+            } catch (Exception e) {
+                Log.d("STACK", "Toggle Crashed: " + e.getMessage());
+            }
+        }
+
+        @Override
+        public void onResetClick(int position, View v) {
+            try {
+                resetTimer(mTimerRowsAdapter.getmTimers().get(position));
+            } catch (Exception e) {
+                Log.d("STACK", "Reset Crashed: " + e.getMessage());
+            }
+        }
+
+    };
+
+    public void inputLabel(Countdown cd) {
+
         final Countdown countdown = cd;
 
         AlertDialog.Builder inputLabelAlert = new AlertDialog.Builder(this);
