@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
 {
-    private static OIClickListener sOIClickListenerLabel;
+    /*private static OIClickListener sOIClickListenerLabel;
     private static OIClickListener sOIClickListenerTime;
     private static OIClickListener sOIClickListenerToggle;
     private static OIClickListener sOIClickListenerReset;
@@ -40,7 +40,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     public void sOIClickListenerReset(OIClickListener oiClickListener)
     {
         TimerRowsAdapter.sOIClickListenerReset = oiClickListener;
-    }
+    }*/
 
     private ArrayList<Countdown> mTimers;
     private int numTimers; //increment when user creates new timer
@@ -66,11 +66,20 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position)
     {
         updateTimer(viewHolder, position);
+        setTags(viewHolder, position);
+    }
+
+    private void setTags(ViewHolder viewHolder, int position)
+    {
+        viewHolder.tv_timerLabel.setTag(position);
+        viewHolder.tv_timeString.setTag(position);
+        viewHolder.tb_startStop.setTag(position);
+        viewHolder.b_reset.setTag(position);
+        //do for all four then do one on click for everything - call that view's tag
     }
 
     private void updateTimer(ViewHolder viewHolder, int position)
     {
-
         Countdown currentTimer = mTimers.get(position);
         if (currentTimer != null)
         {
@@ -111,9 +120,24 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         this.numTimers = numTimers;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public class ViewHolder extends RecyclerView.ViewHolder
     {
-        LinearLayout mLinearLayout;
+        private LinearLayout mLinearLayout;
+        private TextView tv_timerLabel, tv_timeString;
+        private ToggleButton tb_startStop;
+        private Button b_reset;
+
+        public ViewHolder(@NonNull View itemView)
+        {
+            super(itemView);
+            mLinearLayout = itemView.findViewById(R.id.linearLayout);
+            tv_timerLabel = itemView.findViewById(R.id.timerLabel);
+            tv_timeString = itemView.findViewById(R.id.timeString);
+            tb_startStop = itemView.findViewById(R.id.startStopButton);
+            b_reset = itemView.findViewById(R.id.resetButton);
+        }
+    }
+        /*LinearLayout mLinearLayout;
         TextView tv_timerLabel, tv_timeString;
         ToggleButton tb_startStop;
         Button b_reset;
@@ -144,6 +168,9 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
             sOIClickListenerReset.onResetClick(getLayoutPosition(), v);
         }
     }
+    //loop through and find which click has focus
+    //try tags
+    //one on click like final
 
     @SuppressWarnings("UnusedParameters")
     public interface OIClickListener
@@ -155,5 +182,5 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         void onToggleClick(int position, View view);
 
         void onResetClick(int position, View view);
-    }
+    }*/
 }
