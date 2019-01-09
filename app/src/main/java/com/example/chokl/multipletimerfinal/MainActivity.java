@@ -26,6 +26,9 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getJSONof;
+import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getTimersFromJSON;
+
 public class MainActivity extends AppCompatActivity {
 
     private TimerRowsAdapter mTimerRowsAdapter;
@@ -161,28 +164,20 @@ public class MainActivity extends AppCompatActivity {
 //        return true;
 //    }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outstate) {
-//
-//        super.onSaveInstanceState(outstate);
-//        outstate.putInt("NUM_TIMERS", mTimerRowsAdapter.getNumTimers());
-//        for (Countdown countdown : mTimerRowsAdapter.getmTimers()) {
-//            outstate.putLong("TIME_REMAINING", countdown.getRemainingTime());
-//            outstate.putString("LABEL", countdown.getLabel());
-//            outstate.putBoolean("RUNNING", countdown.isRunning());
-//        }
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        mTimerRowsAdapter.setNumTimers(savedInstanceState.getInt("NUM_TIMERS"));
-//
-//        for (int i = 0; i < mTimerRowsAdapter.getNumTimers(); i++ ){
-//
-//        }
-//
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle outstate) {
+
+        super.onSaveInstanceState(outstate);
+        String currentObj = getJSONof(mTimerRowsAdapter);
+        outstate.putString("TIMERS", currentObj);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String currentObj = savedInstanceState.getString("TIMERS");
+        mTimerRowsAdapter = getTimersFromJSON(currentObj);
+    }
 
     private final TimerRowsAdapter.OIClickListener
             listener = new TimerRowsAdapter.OIClickListener() {

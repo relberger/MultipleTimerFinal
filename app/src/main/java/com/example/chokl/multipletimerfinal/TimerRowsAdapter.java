@@ -13,32 +13,31 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
-public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
-{
+public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder> {
     private static OIClickListener sOIClickListenerLabel;
     private static OIClickListener sOIClickListenerTime;
     private static OIClickListener sOIClickListenerToggle;
     private static OIClickListener sOIClickListenerReset;
 
-    public void sOIClickListenerLabel(OIClickListener oiClickListener)
-    {
+    public void sOIClickListenerLabel(OIClickListener oiClickListener) {
         TimerRowsAdapter.sOIClickListenerLabel = oiClickListener;
     }
 
-    public void sOIClickListenerTime(OIClickListener oiClickListener)
-    {
+    public void sOIClickListenerTime(OIClickListener oiClickListener) {
         TimerRowsAdapter.sOIClickListenerTime = oiClickListener;
     }
 
-    public void sOIClickListenerToggle(OIClickListener oiClickListener)
-    {
+    public void sOIClickListenerToggle(OIClickListener oiClickListener) {
         TimerRowsAdapter.sOIClickListenerToggle = oiClickListener;
     }
 
-    public void sOIClickListenerReset(OIClickListener oiClickListener)
-    {
+    public void sOIClickListenerReset(OIClickListener oiClickListener) {
         TimerRowsAdapter.sOIClickListenerReset = oiClickListener;
     }
 
@@ -46,16 +45,14 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     private int numTimers; //increment when user creates new timer
 
 
-    public TimerRowsAdapter(int numTimers)
-    {
+    public TimerRowsAdapter(int numTimers) {
         this.numTimers = numTimers;
         mTimers = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position)
-    {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View itemLayoutView = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.rv_item, viewGroup, false);
 
@@ -63,63 +60,73 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position)
-    {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         updateTimer(viewHolder, position);
     }
 
-    private void updateTimer(ViewHolder viewHolder, int position)
-    {
+    private void updateTimer(ViewHolder viewHolder, int position) {
 
         Countdown currentTimer = mTimers.get(position);
-        if (currentTimer != null)
-        {
-            if (currentTimer.getLabel() != null)
-            {
+        if (currentTimer != null) {
+            if (currentTimer.getLabel() != null) {
                 viewHolder.tv_timerLabel.setText(currentTimer.getLabel());
             }
-            if (currentTimer.getRemainingTime() != 0)
-            {
+            if (currentTimer.getRemainingTime() != 0) {
                 viewHolder.tv_timeString.setText(currentTimer.getRemainingTimeString());
             }
         }
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return numTimers;
     }
 
-    public ArrayList<Countdown> getmTimers()
-    {
+    public ArrayList<Countdown> getmTimers() {
         return mTimers;
     }
 
-    public void setmTimers(ArrayList<Countdown> mTimers)
-    {
+    public void setmTimers(ArrayList<Countdown> mTimers) {
         this.mTimers = mTimers;
     }
 
-    public int getNumTimers()
-    {
+    public int getNumTimers() {
         return numTimers;
     }
 
-    public void setNumTimers(int numTimers)
-    {
+    public void setNumTimers(int numTimers) {
         this.numTimers = numTimers;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-    {
+    /**
+     * Serializes the current object
+     * so it can be stored in the Bundle during rotation
+     *
+     */
+    public static String getJSONof(TimerRowsAdapter obj) {
+        Gson gson = new Gson();
+        return gson.toJson(obj);
+    }
+
+    /**
+     * Reverses the serialization of the object String
+     * back to a Timers object
+     *
+     *
+     */
+    public static TimerRowsAdapter getTimersFromJSON(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, TimerRowsAdapter.class);
+    }
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout mLinearLayout;
         TextView tv_timerLabel, tv_timeString;
         ToggleButton tb_startStop;
         Button b_reset;
 
-        public ViewHolder(View itemLayoutView)
-        {
+        public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
             tv_timerLabel = itemLayoutView.findViewById(R.id.timerLabel);
             tv_timeString = itemLayoutView.findViewById(R.id.timeString);
@@ -136,8 +143,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         }
 
         @Override
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             sOIClickListenerLabel.onLabelClick(getLayoutPosition(), v);
             sOIClickListenerTime.onTimeClick(getLayoutPosition(), v);
             sOIClickListenerToggle.onToggleClick(getLayoutPosition(), v);
@@ -146,8 +152,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     }
 
     @SuppressWarnings("UnusedParameters")
-    public interface OIClickListener
-    {
+    public interface OIClickListener {
         void onLabelClick(int position, View view);
 
         void onTimeClick(int position, View view);
