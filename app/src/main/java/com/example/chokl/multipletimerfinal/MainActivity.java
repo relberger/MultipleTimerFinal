@@ -26,17 +26,20 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+
 import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getJSONof;
 import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getTimersFromJSON;
 
 public class MainActivity extends AppCompatActivity {
+
 
     private TimerRowsAdapter mTimerRowsAdapter;
 
     private ArrayList<Countdown> countdowns = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -47,30 +50,37 @@ public class MainActivity extends AppCompatActivity {
         setupTimers();
     }
 
-    private void setupToolbar() {
+    private void setupToolbar()
+    {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
-    private void setupFAB() {
+    private void setupFAB()
+    {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 createNewCountdown(view);
             }
         });
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case R.id.deleteAllTimers:
                 countdowns.clear();
                 Countdown countdown = new Countdown();
@@ -93,11 +103,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void toggleMenuItem(MenuItem item) {
+    private void toggleMenuItem(MenuItem item)
+    {
         item.setChecked(!item.isChecked());
     }
 
-    public void setupTimers() {
+    public void setupTimers()
+    {
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
 
@@ -115,22 +127,25 @@ public class MainActivity extends AppCompatActivity {
         //timerTimeSet(countdown);//call other countdown updating methods too
     }
 
-    public void createNewCountdown(View view) {
+    public void createNewCountdown(View view)
+    {
         mTimerRowsAdapter.setNumTimers(mTimerRowsAdapter.getNumTimers() + 1);
-        mTimerRowsAdapter.notifyDataSetChanged();
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
         mTimerRowsAdapter.setmTimers(countdowns);
-        updateCountdown(countdown);
+        //updateCountdown(countdown);
+        mTimerRowsAdapter.notifyDataSetChanged();
     }
 
-    private void updateCountdown(Countdown countdown) {
+    private void updateCountdown(Countdown countdown)
+    {
         timerNameSet(countdown);
         //timerTimeSet(countdown);
         startStopTimer(countdown);
     }
 
-    public void timerNameSet(Countdown countdown) {
+    public void timerNameSet(Countdown countdown)
+    {
         TextView timerName = findViewById(R.id.timerLabel);
         countdown.setLabel(timerName.getText().toString());
         timerName.setFocusable(false);
@@ -143,20 +158,24 @@ public class MainActivity extends AppCompatActivity {
 //        time.setFocusable(false);
 //    }
 
-    public void startStopTimer(Countdown countdown) {
+    public void startStopTimer(Countdown countdown)
+    {
         ToggleButton startStopButton = findViewById(R.id.startStopButton);
 
-        if (startStopButton.isChecked()) {
+        if (startStopButton.isChecked())
+        {
             countdown.runTimer();
-        } else if (!startStopButton.isChecked()) {
+        }
+        else if (!startStopButton.isChecked())
+        {
             countdown.setRunning(false);
         }
     }
 
-    private void resetTimer(Countdown countdown) {
+    private void resetTimer(Countdown countdown)
+    {
         countdown.setRemainingTime(0);
     }
-
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -220,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void inputLabel(Countdown cd) {
+
         final Countdown countdown = cd;
 
         AlertDialog.Builder inputLabelAlert = new AlertDialog.Builder(this);
@@ -230,19 +250,22 @@ public class MainActivity extends AppCompatActivity {
 
         inputLabelAlert.setView(labelInput);
 
-        inputLabelAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        inputLabelAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 countdown.setLabel(labelInput.getText().toString());
-                //TextView label = findViewById(R.id.timerLabel);
-                //label.setText(labelInput.getText().toString());
+                TextView label = findViewById(R.id.timerLabel);
+                label.setText(labelInput.getText().toString());
             }
         });
 
         inputLabelAlert.show();
     }
 
-    public void inputTime(Countdown cd) {
+    public void inputTime(Countdown cd)
+    {
         final Countdown countdown = cd;
 
         AlertDialog.Builder inputTimeAlert = new AlertDialog.Builder(this);
@@ -278,73 +301,117 @@ public class MainActivity extends AppCompatActivity {
 
         inputTimeAlert.setView(layout);
 
-        inputTimeAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        inputTimeAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 String hours = "00";
-                if (!timeHoursInput.getText().toString().isEmpty()) {
-                    if (timeHoursInput.getText().toString().length() == 1) {
+                if (!timeHoursInput.getText().toString().isEmpty())
+                {
+                    if (timeHoursInput.getText().toString().length() == 1)
+                    {
                         hours = "0" + timeHoursInput.getText().toString();
-                    } else {
+                    }
+                    else
+                    {
                         hours = timeHoursInput.getText().toString();
                     }
-                    countdown.addHours(Long.parseLong(timeHoursInput.getText().toString()));
+                    countdown.addHours(Long.parseLong(hours));
                 }
                 String minutes = "00";
-                if (!timeMinutesInput.getText().toString().isEmpty()) {
-                    if (timeMinutesInput.getText().toString().length() == 1) {
+                if (!timeMinutesInput.getText().toString().isEmpty())
+                {
+                    if (timeMinutesInput.getText().toString().length() == 1)
+                    {
                         minutes = "0" + timeMinutesInput.getText().toString();
-                    } else {
+                    }
+                    else
+                    {
                         minutes = timeMinutesInput.getText().toString();
                     }
-                    countdown.addMinutes(Long.parseLong(timeHoursInput.getText().toString()));
+                    countdown.addMinutes(Long.parseLong(minutes));
                 }
                 String seconds = "00";
-                if (!timeSecondsInput.getText().toString().isEmpty()) {
-                    if (timeSecondsInput.getText().toString().length() == 1) {
+                if (!timeSecondsInput.getText().toString().isEmpty())
+                {
+                    if (timeSecondsInput.getText().toString().length() == 1)
+                    {
                         seconds = "0" + timeSecondsInput.getText().toString();
-                    } else {
+                    }
+                    else
+                    {
                         seconds = timeSecondsInput.getText().toString();
                     }
-                    countdown.addSeconds(Long.parseLong(timeHoursInput.getText().toString()));
+                    countdown.addSeconds(Long.parseLong(seconds));
                 }
 
                 countdown.setRemainingTimeString(hours + ":" + minutes + ":" + seconds);
-                // TextView time = findViewById(R.id.time);
-                // time.setText(hours + ":" + minutes + ":" + seconds);
-                // startStopTimer(countdown);
+                TextView time = findViewById(R.id.timeString);
+                time.setText(hours + ":" + minutes + ":" + seconds);
             }
         });
 
         inputTimeAlert.show();
     }
 
-    public class InputFilterMinMax implements InputFilter {
+    public void rvClick(View view)
+    {
+        int position = (Integer) view.getTag();
+
+        if (view == findViewById(R.id.timerLabel))
+        {
+            inputLabel(mTimerRowsAdapter.getmTimers().get(position));
+
+        }
+        else if (view == findViewById(R.id.timeString))
+        {
+            inputTime(mTimerRowsAdapter.getmTimers().get(position));
+        }
+        else if (view == findViewById(R.id.startStopButton))
+        {
+            startStopTimer(mTimerRowsAdapter.getmTimers().get(position));
+        }
+        else if (view == findViewById(R.id.resetButton))
+        {
+            resetTimer(mTimerRowsAdapter.getmTimers().get(position));
+        }
+    }
+
+    public class InputFilterMinMax implements InputFilter
+    {
         //input filter taken from https://acomputerengineer.wordpress.com/2015/12/16/limit-number-range-in-edittext-in-android-using-inputfilter/
 
         private int min, max;
 
-        public InputFilterMinMax(int min, int max) {
+        public InputFilterMinMax(int min, int max)
+        {
             this.min = min;
             this.max = max;
         }
 
-        public InputFilterMinMax(String min, String max) {
+        public InputFilterMinMax(String min, String max)
+        {
             this.min = Integer.parseInt(min);
             this.max = Integer.parseInt(max);
         }
 
-        private boolean isInRange(int a, int b, int c) {
+        private boolean isInRange(int a, int b, int c)
+        {
             return b > a ? c >= a && c <= b : c >= b && c <= a;
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            try {
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
+        {
+            try
+            {
                 int input = Integer.parseInt(dest.toString() + source.toString());
                 if (isInRange(min, max, input))
                     return null;
-            } catch (NumberFormatException nfe) {
+            }
+            catch (NumberFormatException nfe)
+            {
             }
             return "";
         }

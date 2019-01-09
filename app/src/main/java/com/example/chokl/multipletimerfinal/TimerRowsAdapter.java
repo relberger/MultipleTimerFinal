@@ -19,8 +19,10 @@ import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 
-public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder> {
-    private static OIClickListener sOIClickListenerLabel;
+
+public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
+{
+    /*private static OIClickListener sOIClickListenerLabel;
     private static OIClickListener sOIClickListenerTime;
     private static OIClickListener sOIClickListenerToggle;
     private static OIClickListener sOIClickListenerReset;
@@ -39,7 +41,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
 
     public void sOIClickListenerReset(OIClickListener oiClickListener) {
         TimerRowsAdapter.sOIClickListenerReset = oiClickListener;
-    }
+    }*/
 
     private ArrayList<Countdown> mTimers;
     private int numTimers; //increment when user creates new timer
@@ -62,10 +64,21 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         updateTimer(viewHolder, position);
+        setTags(viewHolder, position);
     }
 
-    private void updateTimer(ViewHolder viewHolder, int position) {
+    private void setTags(ViewHolder viewHolder, int position)
+    {
+        viewHolder.tv_timerLabel.setTag(position);
+        viewHolder.tv_timeString.setTag(position);
+        viewHolder.tb_startStop.setTag(position);
+        viewHolder.b_reset.setTag(position);
+        //do for all four then do one on click for everything - call that view's tag
+    }
 
+
+    private void updateTimer(ViewHolder viewHolder, int position)
+    {
         Countdown currentTimer = mTimers.get(position);
         if (currentTimer != null) {
             if (currentTimer.getLabel() != null) {
@@ -97,8 +110,8 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     public void setNumTimers(int numTimers) {
         this.numTimers = numTimers;
     }
-
-    /**
+    
+/**
      * Serializes the current object
      * so it can be stored in the Bundle during rotation
      *
@@ -120,45 +133,23 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout mLinearLayout;
-        TextView tv_timerLabel, tv_timeString;
-        ToggleButton tb_startStop;
-        Button b_reset;
 
-        public ViewHolder(View itemLayoutView) {
-            super(itemLayoutView);
-            tv_timerLabel = itemLayoutView.findViewById(R.id.timerLabel);
-            tv_timeString = itemLayoutView.findViewById(R.id.timeString);
-            tb_startStop = itemLayoutView.findViewById(R.id.startStopButton);
-            b_reset = itemLayoutView.findViewById(R.id.resetButton);
+    public class ViewHolder extends RecyclerView.ViewHolder
+    {
+        private LinearLayout mLinearLayout;
+        private TextView tv_timerLabel, tv_timeString;
+        private ToggleButton tb_startStop;
+        private Button b_reset;
 
-            tv_timerLabel.setOnClickListener(this);
-
-            tv_timeString.setOnClickListener(this);
-
-            tb_startStop.setOnClickListener(this);
-
-            b_reset.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            sOIClickListenerLabel.onLabelClick(getLayoutPosition(), v);
-            sOIClickListenerTime.onTimeClick(getLayoutPosition(), v);
-            sOIClickListenerToggle.onToggleClick(getLayoutPosition(), v);
-            sOIClickListenerReset.onResetClick(getLayoutPosition(), v);
+        public ViewHolder(@NonNull View itemView)
+        {
+            super(itemView);
+            mLinearLayout = itemView.findViewById(R.id.linearLayout);
+            tv_timerLabel = itemView.findViewById(R.id.timerLabel);
+            tv_timeString = itemView.findViewById(R.id.timeString);
+            tb_startStop = itemView.findViewById(R.id.startStopButton);
+            b_reset = itemView.findViewById(R.id.resetButton);
         }
     }
-
-    @SuppressWarnings("UnusedParameters")
-    public interface OIClickListener {
-        void onLabelClick(int position, View view);
-
-        void onTimeClick(int position, View view);
-
-        void onToggleClick(int position, View view);
-
-        void onResetClick(int position, View view);
-    }
+        
 }
