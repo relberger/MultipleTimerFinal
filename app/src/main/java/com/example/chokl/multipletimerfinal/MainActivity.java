@@ -9,9 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-
-import android.util.Log;
-
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -25,7 +22,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
-
 
 import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getJSONof;
 import static com.example.chokl.multipletimerfinal.TimerRowsAdapter.getTimersFromJSON;
@@ -197,46 +193,6 @@ public class MainActivity extends AppCompatActivity {
         String currentObj = savedInstanceState.getString("TIMERS");
         mTimerRowsAdapter = getTimersFromJSON(currentObj);
     }
-
-    private final TimerRowsAdapter.OIClickListener
-            listener = new TimerRowsAdapter.OIClickListener() {
-        @Override
-        public void onLabelClick(int position, View view) {
-            try {
-                inputLabel(mTimerRowsAdapter.getmTimers().get(position));
-            } catch (Exception e) {
-                Log.d("STACK", "Label Crashed: " + e.getMessage());
-            }
-        }
-
-        @Override
-        public void onTimeClick(int position, View view) {
-            try {
-                inputTime(mTimerRowsAdapter.getmTimers().get(position));
-            } catch (Exception e) {
-                Log.d("STACK", "Time Crashed: " + e.getMessage());
-            }
-        }
-
-        @Override
-        public void onToggleClick(int position, View view) {
-            try {
-                startStopTimer(mTimerRowsAdapter.getmTimers().get(position));
-            } catch (Exception e) {
-                Log.d("STACK", "Toggle Crashed: " + e.getMessage());
-            }
-        }
-
-        @Override
-        public void onResetClick(int position, View v) {
-            try {
-                resetTimer(mTimerRowsAdapter.getmTimers().get(position));
-            } catch (Exception e) {
-                Log.d("STACK", "Reset Crashed: " + e.getMessage());
-            }
-        }
-
-    };
 
     public void inputLabel(Countdown cd) {
 
