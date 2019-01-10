@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,12 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
     private TimerRowsAdapter mTimerRowsAdapter;
-    private ArrayList<Countdown> countdowns = new ArrayList<> ();
+    private ArrayList<Countdown> countdowns;
 
     private EditText mTimerName;
     private TextView mTimerTime;
@@ -38,6 +43,17 @@ public class MainActivity extends AppCompatActivity
 
     private View mSnackBarContainer;
 
+
+    @Override protected void onSaveInstanceState (Bundle outState)
+    {
+        super.onSaveInstanceState (outState);
+        Gson gson = new Gson ();
+        Type cdType = new TypeToken<ArrayList<Countdown>> (){}.getType ();
+        String serialized = gson.toJson (countdowns, cdType);
+        Log.e ("GSON", serialized);
+        outState.putString ("CDs", serialized);
+
+    }
 
     @Override
     protected void onCreate (Bundle savedInstanceState)
@@ -49,8 +65,23 @@ public class MainActivity extends AppCompatActivity
         setupToolbar ();
         setupFAB ();
 
-        createAndAddCountdownObject ();
+        initCountdowns(savedInstanceState);
         setupTimers ();
+    }
+
+    private void initCountdowns (Bundle savedInstanceState)
+    {
+        if (savedInstanceState == null) {
+            countdowns = new ArrayList<> ();
+            createAndAddCountdownObject ();
+        }
+        else
+        {
+            Gson gson = new Gson ();
+            Type cdType = new TypeToken<ArrayList<Countdown>> (){}.getType ();
+            countdowns = gson.fromJson (savedInstanceState.getString ( "CDs"), cdType);
+        }
+
     }
 
     private void setupViewReferences ()

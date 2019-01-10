@@ -2,16 +2,27 @@ package com.example.chokl.multipletimerfinal;
 
 import android.os.Handler;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Locale;
 
 public class Countdown
 {
+    @SerializedName("timeremaining")
+    @Expose
     private long remainingTime;
+
+    @SerializedName("labeltext")
+    @Expose
     private String label;
+
+    @SerializedName("timerrunning")
+    @Expose
     private boolean timerRunning;
 
-    private Handler mHandler;
-    private Runnable mRunnable;
+    private transient Handler mHandler;
+    private transient Runnable mRunnable;
 
 
     public Countdown ()
