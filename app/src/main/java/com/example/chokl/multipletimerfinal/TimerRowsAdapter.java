@@ -44,6 +44,9 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
     {
         setTags (viewHolder, position);
         updateTimerViews (viewHolder, position);
+
+        // Store the position in the CD
+        mTimers.get (position).setPosition (position);
     }
 
     private void setTags (ViewHolder viewHolder, int position)

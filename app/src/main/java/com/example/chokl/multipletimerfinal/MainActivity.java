@@ -1,7 +1,10 @@
 package com.example.chokl.multipletimerfinal;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,11 +35,24 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+    private PositionReceiver mReceiver;
+
     private TimerRowsAdapter mTimerRowsAdapter;
     private ArrayList<Countdown> countdowns;
 
     private View mSnackBarContainer;
 
+    @Override protected void onResume ()
+    {
+        super.onResume ();
+        //registerReceiver (mReceiver, new IntentFilter ("com.android.activity.SEND_DATA"));
+    }
+
+    @Override protected void onPause ()
+    {
+        super.onPause ();
+        //unregisterReceiver (mReceiver);
+    }
 
     @Override protected void onSaveInstanceState (Bundle outState)
     {
@@ -60,6 +75,8 @@ public class MainActivity extends AppCompatActivity
 
         initCountdowns(savedInstanceState);
         setupTimers ();
+
+        //mReceiver = new PositionReceiver ();
     }
 
     private void initCountdowns (Bundle savedInstanceState)
@@ -317,5 +334,15 @@ public class MainActivity extends AppCompatActivity
             return "";
         }
 
+    }
+
+    private class PositionReceiver extends BroadcastReceiver
+    {
+
+        @Override public void onReceive (Context context, Intent intent)
+        {
+            int message = intent.getIntExtra ("POSITION", 0);
+            mTimerRowsAdapter.notifyItemChanged (message);
+        }
     }
 }

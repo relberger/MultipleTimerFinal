@@ -1,7 +1,7 @@
 package com.example.chokl.multipletimerfinal;
 
+import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -22,12 +22,27 @@ public class Countdown
     @Expose
     private boolean timerRunning;
 
+    @SerializedName ("positioninarray")
+    @Expose
+    private int mPosition;
+
     private transient Handler mHandler;
+
     private transient Runnable mRunnable;
 
+    public int getPosition ()
+    {
+        return mPosition;
+    }
+
+    public void setPosition (int position)
+    {
+        mPosition = position;
+    }
 
     public Countdown ()
     {
+        mPosition = 0;
         remainingTime = 0;
         setupTimer ();
     }
@@ -74,12 +89,27 @@ public class Countdown
     private void resumeTimer ()
     {
         timerRunning = true;
+
+        // can be null because declared transient to not save them when rotating...
+        if (mHandler == null)
+            setupTimer ();
+
         mHandler.postDelayed (mRunnable, 1000);
+        //sendDataToMainActivity ();
     }
+
+    private void sendDataToMainActivity ()
+    {
+        Intent intent = new Intent();
+        intent.putExtra ("POSITION", mPosition);
+        intent.setAction("com.android.activity.SEND_DATA");
+    }
+
 
     private void pauseTimer ()
     {
-        mHandler.removeCallbacks (mRunnable);
+        if (mHandler != null)
+            mHandler.removeCallbacks (mRunnable);
         timerRunning = false;
     }
 
@@ -96,18 +126,12 @@ public class Countdown
 
     public String getRemainingTimeString ()
     {
-        //long hour = 0, min = 0, sec = 0;
         long hour, min, sec;
 
         hour = (remainingTime / 3_600_000) % 24;
         min = (remainingTime / 60_000) % 60;
         sec = (remainingTime / 1000) % 60;
 
-        Log.d ("NUMBERS", "Remaining Time: " + remainingTime / 1000);
-        Log.d ("NUMBERS", "Hours: " + hour);
-        Log.d ("NUMBERS", "Minutes: " + min);
-        Log.d ("NUMBERS", "Seconds: " + sec);
-        
         return String.format (Locale.getDefault (), "%02d:%02d:%02d", hour, min, sec);
     }
 

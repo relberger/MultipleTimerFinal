@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/editTextTimerName"
+            android:layout_toEndOf="@id/editTextTimerName"
             android:ems="4"
             android:gravity="center"
             android:onClick="rvClick"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/buttonReset"
+            android:layout_toStartOf="@+id/buttonReset"
             android:onClick="rvClick"
             android:text="@string/startStopButton"/>
 
