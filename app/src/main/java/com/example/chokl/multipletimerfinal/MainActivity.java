@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,9 +49,7 @@ public class MainActivity extends AppCompatActivity
         Gson gson = new Gson ();
         Type cdType = new TypeToken<ArrayList<Countdown>> (){}.getType ();
         String serialized = gson.toJson (countdowns, cdType);
-        Log.e ("GSON", serialized);
         outState.putString ("CDs", serialized);
-
     }
 
     @Override
@@ -79,7 +76,8 @@ public class MainActivity extends AppCompatActivity
         {
             Gson gson = new Gson ();
             Type cdType = new TypeToken<ArrayList<Countdown>> (){}.getType ();
-            countdowns = gson.fromJson (savedInstanceState.getString ( "CDs"), cdType);
+            String serialized = savedInstanceState.getString ( "CDs");
+            countdowns = gson.fromJson (serialized, cdType);
         }
 
     }
