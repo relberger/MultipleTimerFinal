@@ -1,6 +1,7 @@
 package com.example.chokl.multipletimerfinal;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -9,15 +10,15 @@ import java.util.Locale;
 
 public class Countdown
 {
-    @SerializedName("timeremaining")
+    @SerializedName ("timeremaining")
     @Expose
     private long remainingTime;
 
-    @SerializedName("labeltext")
+    @SerializedName ("labeltext")
     @Expose
     private String label;
 
-    @SerializedName("timerrunning")
+    @SerializedName ("timerrunning")
     @Expose
     private boolean timerRunning;
 
@@ -95,17 +96,18 @@ public class Countdown
 
     public String getRemainingTimeString ()
     {
-        long hour = 0, min = 0, sec = 0;
+        //long hour = 0, min = 0, sec = 0;
+        long hour, min, sec;
 
-        if (remainingTime > 0) {
-            hour = remainingTime / 3_600_000;
-            if (hour > 0) {
-                min = remainingTime % hour;
-                if (min > 0) {
-                    sec = remainingTime % min / 1_000;
-                }
-            }
-        }
+        hour = (remainingTime / 3_600_000) % 24;
+        min = (remainingTime / 60_000) % 60;
+        sec = (remainingTime / 1000) % 60;
+
+        Log.d ("NUMBERS", "Remaining Time: " + remainingTime / 1000);
+        Log.d ("NUMBERS", "Hours: " + hour);
+        Log.d ("NUMBERS", "Minutes: " + min);
+        Log.d ("NUMBERS", "Seconds: " + sec);
+        
         return String.format (Locale.getDefault (), "%02d:%02d:%02d", hour, min, sec);
     }
 

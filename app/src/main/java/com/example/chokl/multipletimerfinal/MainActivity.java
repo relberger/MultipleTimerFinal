@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,11 +36,6 @@ public class MainActivity extends AppCompatActivity
     private TimerRowsAdapter mTimerRowsAdapter;
     private ArrayList<Countdown> countdowns;
 
-    private EditText mTimerName;
-    private TextView mTimerTime;
-    private ToggleButton mStartStopButton;
-    private Button mResetButton;
-
     private View mSnackBarContainer;
 
 
@@ -57,10 +53,10 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
-        setupViewReferences ();
 
         setupToolbar ();
         setupFAB ();
+        mSnackBarContainer = findViewById (R.id.activityMain);
 
         initCountdowns(savedInstanceState);
         setupTimers ();
@@ -80,15 +76,6 @@ public class MainActivity extends AppCompatActivity
             countdowns = gson.fromJson (serialized, cdType);
         }
 
-    }
-
-    private void setupViewReferences ()
-    {
-        mTimerName = findViewById (R.id.editTextTimerName);
-        mTimerTime = findViewById (R.id.textViewTimerTime);
-        mStartStopButton = findViewById (R.id.buttonStartStop);
-        mResetButton = findViewById (R.id.buttonReset);
-        mSnackBarContainer = findViewById (R.id.activityMain);
     }
 
     private void setupToolbar ()
@@ -178,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         // timer name (EditText) is handled in the adapter - no need to handle that here
         if (view.getClass ().equals (AppCompatTextView.class))//(view == mTimerTime)
         {
-            inputTimerTimeLabel (currentCountDown);
+            inputTimerTimeLabel (currentCountDown, position);
         }
         else if (view.getClass ().equals (ToggleButton.class)) //(view == mStartStopButton)
         {
@@ -207,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         countdown.setRemainingTime (0);
     }
 
-    public void inputTimerTimeLabel (Countdown cd)
+    public void inputTimerTimeLabel (Countdown cd, final int position)
     {
         final Countdown countdown = cd;
 
@@ -277,10 +264,14 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
+                // first reset time to zero, then add each of the hours, minutes and seconds
                 countdown.setRemainingTime (0);
                 countdown.addHours (Long.parseLong (hours));
                 countdown.addMinutes (Long.parseLong (minutes));
                 countdown.addSeconds (Long.parseLong (seconds));
+
+                // This update has to be here, not in the calling method, or else it runs before the dialog sends the new time here
+                mTimerRowsAdapter.notifyItemChanged (position);
             }
         });
 
