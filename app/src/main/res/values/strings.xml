@@ -6,4 +6,7 @@
     <string name="deleteAll">Delete all timers</string>
     <string name="about">Create multiple timers within the same app</string>
     <string name="menuCheck">I don\'t know what we would want checkable?</string>
+    <string name="timerName">Enter timer name</string>
+    <string name="reset">Reset</string>
+    <string name="enterTimerName">Enter the timer name</string>
 </resources>

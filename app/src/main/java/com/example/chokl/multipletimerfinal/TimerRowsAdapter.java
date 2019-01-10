@@ -2,71 +2,124 @@ package com.example.chokl.multipletimerfinal;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import java.util.ArrayList;
 
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
 {
-    private Countdown [] mTimers;
-    private int numTimers; //increment when user creates new timer
+    private ArrayList<Countdown> mTimers;
 
-    public TimerRowsAdapter(int numTimers)
+    public TimerRowsAdapter (ArrayList<Countdown> timers)
     {
-        this.numTimers = numTimers;
-        mTimers = new Countdown[numTimers];
+        if (timers != null) {
+            mTimers = timers;
+        }
+        else {
+            throw new IllegalArgumentException ("Timers List must not be null");
+        }
+
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
+    public ViewHolder onCreateViewHolder (@NonNull ViewGroup viewGroup, int i)
     {
-        View itemLayoutView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.rv_item, viewGroup, false);
+        View itemLayoutView = LayoutInflater.from (viewGroup.getContext ()).inflate
+                (R.layout.rv_item, viewGroup, false);
 
-        return new ViewHolder(itemLayoutView);
+        return new ViewHolder (itemLayoutView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i)
+    public void onBindViewHolder (@NonNull ViewHolder viewHolder, int position)
     {
-        //not sure what to do here
+        setTags (viewHolder, position);
+        updateTimerViews (viewHolder, position);
+    }
+
+    private void setTags (ViewHolder viewHolder, int position)
+    {
+        viewHolder.etTimerName.setTag (position);
+        viewHolder.tvTimerTime.setTag (position);
+        viewHolder.buttonStartStop.setTag (position);
+        viewHolder.buttonReset.setTag (position);
+    }
+
+    private void updateTimerViews (ViewHolder viewHolder, int position)
+    {
+        Countdown currentTimer = mTimers.get (position);
+        if (currentTimer != null) {
+            viewHolder.etTimerName.setText (currentTimer.getLabel ());
+            viewHolder.tvTimerTime.setText (currentTimer.getRemainingTimeString ());
+            viewHolder.buttonStartStop.setChecked (currentTimer.isTimerRunning ());
+        }
     }
 
     @Override
-    public int getItemCount()
+    public int getItemCount ()
     {
-        return numTimers;
+        return mTimers.size ();
     }
 
-    public Countdown[] getmTimers()
+    public Countdown getCountdownAt (int position)
     {
-        return mTimers;
+        return mTimers.get (position);
     }
 
-    public void setmTimers(Countdown[] mTimers)
+    public void overwriteTimersListWith (ArrayList<Countdown> mTimers)
     {
         this.mTimers = mTimers;
     }
 
-    public int getNumTimers()
-    {
-        return numTimers;
-    }
-
-    public void setNumTimers(int numTimers)
-    {
-        this.numTimers = numTimers;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder
     {
-        private LinearLayout mLinearLayout;
-        public ViewHolder(@NonNull View itemView)
+        //public LinearLayout mLinearLayout;
+        EditText etTimerName;
+        TextView tvTimerTime;
+        ToggleButton buttonStartStop;
+        Button buttonReset;
+
+
+        public ViewHolder (@NonNull View itemView)
         {
-            super(itemView);
-            mLinearLayout = itemView.findViewById(R.id.linearLayout);
+            super (itemView);
+            etTimerName = itemView.findViewById (R.id.editTextTimerName);
+            tvTimerTime = itemView.findViewById (R.id.textViewTimerTime);
+            buttonStartStop = itemView.findViewById (R.id.buttonStartStop);
+            buttonReset = itemView.findViewById (R.id.buttonReset);
+
+            updateLabelInArrayList ();
+        }
+
+        private void updateLabelInArrayList ()
+        {
+            etTimerName.addTextChangedListener (new TextWatcher ()
+            {
+                @Override
+                public void beforeTextChanged (CharSequence s, int start, int count, int after)
+                {
+
+                }
+
+                @Override
+                public void onTextChanged (CharSequence s, int start, int before, int count)
+                {
+                }
+
+                @Override public void afterTextChanged (Editable s)
+                {
+                    mTimers.get (getAdapterPosition ()).setLabel (s.toString ());
+                }
+            });
         }
     }
 }

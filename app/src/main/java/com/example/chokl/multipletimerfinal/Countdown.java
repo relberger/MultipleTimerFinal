@@ -1,79 +1,141 @@
 package com.example.chokl.multipletimerfinal;
 
+import android.os.Handler;
+
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Countdown
 {
     private long remainingTime;
-    private Timer timer;
     private String label;
-    private boolean running;
-    private String remainingTimeString;
+    private boolean timerRunning;
 
-    Countdown()
+    private Handler mHandler;
+    private Runnable mRunnable;
+
+
+    public Countdown ()
     {
-        this.timer = new Timer();
+        remainingTime = 0;
+        setupTimer ();
     }
 
-    void runTimer()
+    private void setupTimer ()
     {
-        TimerTask decrement = new TimerTask()
+        // Create the Handler object
+        mHandler = new Handler ();
+
+        // Create the Runnable that, after being called,
+        // calls the on timer tick method and then itself one second later, and on and on...
+        mRunnable = new Runnable ()
         {
             @Override
-            public void run()
+            public void run ()
             {
-                if (remainingTime >= 0)
-                {
-                    //clock.setText(getRemainingTimeString());
-                    remainingTime = remainingTime - 1000;
-                    timeToString();
-                }
-                else
-                {
-                    timer.cancel();
-                }
+                onTimerTick ();
+                mHandler.postDelayed (this, 1000);
             }
         };
-        timer.schedule(decrement, 50, 1000);
     }
 
-    private void timeToString()
+    private void onTimerTick ()
     {
-        long hour = remainingTime / 3_600_000;
-        long min = remainingTime % hour;
-        long sec = remainingTime % min / 1000;
-        remainingTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, min, sec);
+        if (remainingTime > 0) {
+            remainingTime--;
+        }
+        else {
+            pauseTimer ();
+        }
     }
 
-    public String getRemainingTimeString()
+
+    private void pauseResumeTimer ()
     {
-        return remainingTimeString;
+        if (!timerRunning) {
+            resumeTimer ();
+        }
+        else {
+            pauseTimer ();
+        }
     }
 
-    public void setRemainingTimeString(String remainingTimeString)
+    private void resumeTimer ()
     {
-        this.remainingTimeString = remainingTimeString;
+        timerRunning = true;
+        mHandler.postDelayed (mRunnable, 1000);
     }
 
-    public String getLabel()
+    private void pauseTimer ()
+    {
+        mHandler.removeCallbacks (mRunnable);
+        timerRunning = false;
+    }
+
+
+    public long getRemainingTime ()
+    {
+        return remainingTime;
+    }
+
+    public void setRemainingTime (long remainingTime)
+    {
+        this.remainingTime = remainingTime;
+    }
+
+    public String getRemainingTimeString ()
+    {
+        long hour = 0, min = 0, sec = 0;
+
+        if (remainingTime > 0) {
+            hour = remainingTime / 3_600_000;
+            if (hour > 0) {
+                min = remainingTime % hour;
+                if (min > 0) {
+                    sec = remainingTime % min / 1_000;
+                }
+            }
+        }
+        return String.format (Locale.getDefault (), "%02d:%02d:%02d", hour, min, sec);
+    }
+
+    public String getLabel ()
     {
         return label;
     }
 
-    public void setLabel(String label)
+    public void setLabel (String label)
     {
         this.label = label;
     }
 
-    public boolean isRunning()
+    public boolean isTimerRunning ()
     {
-        return running;
+        return timerRunning;
     }
 
-    public void setRunning(boolean running)
+    public void setTimerRunning (boolean timerRunning)
     {
-        this.running = running;
+        this.timerRunning = timerRunning;
+        if (timerRunning) {
+            resumeTimer ();
+        }
+        else {
+            pauseTimer ();
+        }
+    }
+
+    public void addHours (long hours)
+    {
+        remainingTime = remainingTime + (hours * 3_600_000);
+    }
+
+    public void addMinutes (long minutes)
+    {
+        remainingTime = remainingTime + (minutes * 60_000);
+    }
+
+    public void addSeconds (long seconds)
+    {
+        remainingTime = remainingTime + (seconds * 1_000);
     }
 }
