@@ -26,7 +26,6 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         else {
             throw new IllegalArgumentException ("Timers List must not be null");
         }
-
     }
 
     @NonNull

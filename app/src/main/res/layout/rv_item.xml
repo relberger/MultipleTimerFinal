@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:ems="7"
+            android:ems="5"
             android:gravity="center"
             android:hint="@string/enterTimerName"
             android:onClick="rvClick"/>

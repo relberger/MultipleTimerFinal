@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity
             String serialized = savedInstanceState.getString ( "CDs");
             countdowns = gson.fromJson (serialized, cdType);
         }
-
     }
 
     private void setupToolbar ()
@@ -169,10 +168,9 @@ public class MainActivity extends AppCompatActivity
 
     private void createAndAddCountdownObject ()
     {
-        Countdown countdown = new Countdown ();
-        countdowns.add (countdown);
+        Countdown countdown = new Countdown();
+        countdowns.add(countdown);
     }
-
 
     public void rvClick (View view)
     {
@@ -294,7 +292,6 @@ public class MainActivity extends AppCompatActivity
 
         inputTimeAlert.show ();
     }
-
 
     public class InputFilterMinMax implements InputFilter
     {
