@@ -68,7 +68,7 @@ public class Countdown
     private void onTimerTick ()
     {
         if (remainingTime > 0) {
-            remainingTime--;
+            remainingTime-=1000;
         }
         else {
             pauseTimer ();
