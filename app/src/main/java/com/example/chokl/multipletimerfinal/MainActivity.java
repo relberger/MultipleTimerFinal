@@ -212,8 +212,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which)
             {
                 countdown.setLabel(labelInput.getText().toString());
-                TextView label = findViewById(R.id.timerLabel);
-                label.setText(labelInput.getText().toString());
+//                TextView label = findViewById(R.id.timerLabel);
+//                label.setText(labelInput.getText().toString());
             }
         });
 
@@ -318,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
         if (view == findViewById(R.id.timerLabel))
         {
             inputLabel(mTimerRowsAdapter.getmTimers().get(position));
-
         }
         else if (view == findViewById(R.id.timeString))
         {
@@ -332,6 +331,7 @@ public class MainActivity extends AppCompatActivity {
         {
             resetTimer(mTimerRowsAdapter.getmTimers().get(position));
         }
+        mTimerRowsAdapter.notifyItemChanged(position);
     }
 
     public class InputFilterMinMax implements InputFilter

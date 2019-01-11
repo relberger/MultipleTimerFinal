@@ -1,48 +1,22 @@
 package com.example.chokl.multipletimerfinal;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 
 
 public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.ViewHolder>
 {
-    /*private static OIClickListener sOIClickListenerLabel;
-    private static OIClickListener sOIClickListenerTime;
-    private static OIClickListener sOIClickListenerToggle;
-    private static OIClickListener sOIClickListenerReset;
-
-    public void sOIClickListenerLabel(OIClickListener oiClickListener) {
-        TimerRowsAdapter.sOIClickListenerLabel = oiClickListener;
-    }
-
-    public void sOIClickListenerTime(OIClickListener oiClickListener) {
-        TimerRowsAdapter.sOIClickListenerTime = oiClickListener;
-    }
-
-    public void sOIClickListenerToggle(OIClickListener oiClickListener) {
-        TimerRowsAdapter.sOIClickListenerToggle = oiClickListener;
-    }
-
-    public void sOIClickListenerReset(OIClickListener oiClickListener) {
-        TimerRowsAdapter.sOIClickListenerReset = oiClickListener;
-    }*/
-
     private ArrayList<Countdown> mTimers;
     private int numTimers; //increment when user creates new timer
 
@@ -63,8 +37,8 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        updateTimer(viewHolder, position);
         setTags(viewHolder, position);
+        updateTimer(viewHolder, position);
     }
 
     private void setTags(ViewHolder viewHolder, int position)
@@ -73,6 +47,7 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         viewHolder.tv_timeString.setTag(position);
         viewHolder.tb_startStop.setTag(position);
         viewHolder.b_reset.setTag(position);
+
         //do for all four then do one on click for everything - call that view's tag
     }
 
@@ -132,8 +107,6 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         return gson.fromJson(json, TimerRowsAdapter.class);
     }
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         private LinearLayout mLinearLayout;
@@ -151,5 +124,4 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
             b_reset = itemView.findViewById(R.id.resetButton);
         }
     }
-        
 }
