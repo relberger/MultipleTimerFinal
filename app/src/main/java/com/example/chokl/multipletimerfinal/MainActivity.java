@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     if (mPlaySound == true)
                     {
-                        mp.stop();
+                       mp.stop();
                     }
                     resetTimer(countdown, countdown.getPosition());
                 }
