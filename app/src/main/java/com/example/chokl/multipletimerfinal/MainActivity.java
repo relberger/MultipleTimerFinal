@@ -284,7 +284,9 @@ public class MainActivity extends AppCompatActivity
 
     private void resetTimer(Countdown countdown, final int position)
     {
-        countdown.setRemainingTime(0);
+        Countdown countdownNew = new Countdown();
+        countdowns.set(countdown.getPosition(), countdownNew);
+
         mTimerRowsAdapter.notifyItemChanged(position);
     }
 
