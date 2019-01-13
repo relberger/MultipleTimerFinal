@@ -1,79 +1,178 @@
 package com.example.chokl.multipletimerfinal;
 
+import android.content.Intent;
+import android.os.Handler;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Countdown
 {
+    @SerializedName ("timeremaining")
+    @Expose
     private long remainingTime;
-    private Timer timer;
-    private String label;
-    private boolean running;
-    private String remainingTimeString;
 
-    Countdown()
+    @SerializedName ("labeltext")
+    @Expose
+    private String label;
+
+    @SerializedName ("timerrunning")
+    @Expose
+    private boolean timerRunning;
+
+    @SerializedName ("positioninarray")
+    @Expose
+    private int mPosition;
+
+    private transient Handler mHandler;
+
+    private transient Runnable mRunnable;
+
+    public int getPosition ()
     {
-        this.timer = new Timer();
+        return mPosition;
     }
 
-    void runTimer()
+    public void setPosition (int position)
     {
-        TimerTask decrement = new TimerTask()
+        mPosition = position;
+    }
+
+    public Countdown ()
+    {
+        mPosition = 0;
+        remainingTime = 0;
+        setupTimer ();
+    }
+
+    private void setupTimer ()
+    {
+        // Create the Handler object
+        mHandler = new Handler ();
+
+        // Create the Runnable that, after being called,
+        // calls the on timer tick method and then itself one second later, and on and on...
+        mRunnable = new Runnable ()
         {
             @Override
-            public void run()
+            public void run ()
             {
-                if (remainingTime >= 0)
-                {
-                    //clock.setText(getRemainingTimeString());
-                    remainingTime = remainingTime - 1000;
-                    timeToString();
-                }
-                else
-                {
-                    timer.cancel();
-                }
+                onTimerTick ();
+                mHandler.postDelayed (this, 1000);
             }
         };
-        timer.schedule(decrement, 50, 1000);
     }
 
-    private void timeToString()
+    private void onTimerTick ()
     {
-        long hour = remainingTime / 3_600_000;
-        long min = remainingTime % hour;
-        long sec = remainingTime % min / 1000;
-        remainingTimeString = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, min, sec);
+        if (remainingTime > 0) {
+            remainingTime-=1000;
+        }
+        else {
+            pauseTimer ();
+        }
     }
 
-    public String getRemainingTimeString()
+
+    private void pauseResumeTimer ()
     {
-        return remainingTimeString;
+        if (!timerRunning) {
+            resumeTimer ();
+        }
+        else {
+            pauseTimer ();
+        }
     }
 
-    public void setRemainingTimeString(String remainingTimeString)
+    private void resumeTimer ()
     {
-        this.remainingTimeString = remainingTimeString;
+        timerRunning = true;
+
+        // can be null because declared transient to not save them when rotating...
+        if (mHandler == null)
+            setupTimer ();
+
+        mHandler.postDelayed (mRunnable, 1000);
+        //sendDataToMainActivity ();
     }
 
-    public String getLabel()
+    private void sendDataToMainActivity ()
+    {
+        Intent intent = new Intent();
+        intent.putExtra ("POSITION", mPosition);
+        intent.setAction("com.android.activity.SEND_DATA");
+    }
+
+
+    private void pauseTimer ()
+    {
+        if (mHandler != null)
+            mHandler.removeCallbacks (mRunnable);
+        timerRunning = false;
+    }
+
+
+    public long getRemainingTime ()
+    {
+        return remainingTime;
+    }
+
+    public void setRemainingTime (long remainingTime)
+    {
+        this.remainingTime = remainingTime;
+    }
+
+    public String getRemainingTimeString ()
+    {
+        long hour, min, sec;
+
+        hour = (remainingTime / 3_600_000) % 24;
+        min = (remainingTime / 60_000) % 60;
+        sec = (remainingTime / 1000) % 60;
+
+        return String.format (Locale.getDefault (), "%02d:%02d:%02d", hour, min, sec);
+    }
+
+    public String getLabel ()
     {
         return label;
     }
 
-    public void setLabel(String label)
+    public void setLabel (String label)
     {
         this.label = label;
     }
 
-    public boolean isRunning()
+    public boolean isTimerRunning ()
     {
-        return running;
+        return timerRunning;
     }
 
-    public void setRunning(boolean running)
+    public void setTimerRunning (boolean timerRunning)
     {
-        this.running = running;
+        this.timerRunning = timerRunning;
+        if (timerRunning) {
+            resumeTimer ();
+        }
+        else {
+            pauseTimer ();
+        }
+    }
+
+    public void addHours (long hours)
+    {
+        remainingTime = remainingTime + (hours * 3_600_000);
+    }
+
+    public void addMinutes (long minutes)
+    {
+        remainingTime = remainingTime + (minutes * 60_000);
+    }
+
+    public void addSeconds (long seconds)
+    {
+        remainingTime = remainingTime + (seconds * 1_000);
     }
 }
