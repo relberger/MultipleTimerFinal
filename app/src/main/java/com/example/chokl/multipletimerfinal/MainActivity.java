@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -35,14 +38,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
-    private PositionReceiver mReceiver;
-
     private TimerRowsAdapter mTimerRowsAdapter;
     private ArrayList<Countdown> countdowns;
-
     private View mSnackBarContainer;
-
     private Thread mThread;
+    private boolean mPlaySound;
 
     @Override
     protected void onResume()
@@ -100,7 +100,11 @@ public class MainActivity extends AppCompatActivity
                             {
                                 for (Countdown countdown : countdowns)
                                 {
-                                    mTimerRowsAdapter.notifyItemChanged(countdown.getPosition());
+                                    if (countdown.isTimerRunning())
+                                    {
+                                        mTimerRowsAdapter.notifyItemChanged(countdown.getPosition());
+                                        checkTimeUp(countdown);
+                                    }
                                 }
                             }
                         });
@@ -113,6 +117,39 @@ public class MainActivity extends AppCompatActivity
         };
 
         mThread.start();
+    }
+
+    private void checkTimeUp(Countdown countdown)
+    {
+        if (countdown.getRemainingTimeString().equals("00:00:00") && countdown.isTimerRunning())
+        {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), notification);
+            if (mPlaySound == true)
+            {
+                mp.start();
+            }
+
+            AlertDialog.Builder timeUp = new AlertDialog.Builder(this);
+
+            String title = !countdown.getLabel().isEmpty() ? countdown.getLabel() : "Timer";
+
+            timeUp.setTitle(title);
+            timeUp.setMessage(title + " is done");
+
+            timeUp.setPositiveButton("OK", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    if (mPlaySound == true)
+                    {
+                        mp.stop();
+                    }
+                }
+            });
+            timeUp.show();
+        }
     }
 
     private void initCountdowns(Bundle savedInstanceState)
@@ -174,7 +211,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.menuCheck:
                 toggleMenuItem(item);
-                //...
+                mPlaySound = !mPlaySound;
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -211,7 +248,6 @@ public class MainActivity extends AppCompatActivity
         Countdown countdown = new Countdown();
         countdowns.add(countdown);
     }
-
 
     public void rvClick(View view)
     {
@@ -346,7 +382,6 @@ public class MainActivity extends AppCompatActivity
 
         inputTimeAlert.show();
     }
-
 
     public class InputFilterMinMax implements InputFilter
     {
