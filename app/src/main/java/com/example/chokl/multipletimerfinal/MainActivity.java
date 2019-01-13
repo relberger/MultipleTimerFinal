@@ -23,7 +23,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -219,7 +218,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-
     private void toggleMenuItem(MenuItem item)
     {
         item.setChecked(!item.isChecked());
@@ -263,7 +261,7 @@ public class MainActivity extends AppCompatActivity
         {
             startStopTimer(currentCountDown, position);
         }
-        else if (view.getClass().equals(Button.class)) //(view == mResetButton)
+        else if (view.getId() == findViewById(R.id.buttonReset).getId()) //wasn't working to test class.equals(button) //(view == mResetButton)
         {
             resetTimer(currentCountDown, position);
         }
