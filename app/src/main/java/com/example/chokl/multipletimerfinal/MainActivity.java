@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         mp.stop();
                     }
+                    resetTimer(countdown, countdown.getPosition());
                 }
             });
             timeUp.show();
