@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">MultipleTimerFinal</string>
+    <string name="app_name">Multiple Timers</string>
     <string name="timeRemaining">00:00:00</string>
-    <string name="startStopButton" />
-    <string name="title_activity_main">MainActivity</string>
     <string name="deleteAll">Delete all timers</string>
-    <string name="about">Create multiple timers within the same app</string>
+    <string name="aboutBodyText">Create multiple timers within the same app</string>
     <string name="menuCheck">Play sound when time is up</string>
-    <string name="timerName">Enter timer name</string>
     <string name="reset">Reset</string>
-    <string name="enterTimerName">Enter the timer name</string>
+    <string name="enterTimerName">Enter the name</string>
+    <string name="about">About</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 </resources>

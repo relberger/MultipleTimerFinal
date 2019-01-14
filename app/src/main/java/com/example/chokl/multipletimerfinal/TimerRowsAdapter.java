@@ -69,19 +69,14 @@ public class TimerRowsAdapter extends RecyclerView.Adapter<TimerRowsAdapter.View
         return mTimers.get(position);
     }
 
-    public void overwriteTimersListWith(ArrayList<Countdown> mTimers) {
-        this.mTimers = mTimers;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //public LinearLayout mLinearLayout;
-        EditText etTimerName;
-        TextView tvTimerTime;
-        ToggleButton buttonStartStop;
-        Button buttonReset;
+        final EditText etTimerName;
+        final TextView tvTimerTime;
+        final ToggleButton buttonStartStop;
+        final Button buttonReset;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder (@NonNull View itemView) {
             super(itemView);
             etTimerName = itemView.findViewById(R.id.editTextTimerName);
             tvTimerTime = itemView.findViewById(R.id.textViewTimerTime);

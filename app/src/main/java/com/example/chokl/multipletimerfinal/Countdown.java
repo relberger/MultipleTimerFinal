@@ -1,6 +1,5 @@
 package com.example.chokl.multipletimerfinal;
 
-import android.content.Intent;
 import android.os.Handler;
 
 import com.google.gson.annotations.Expose;
@@ -10,19 +9,19 @@ import java.util.Locale;
 
 public class Countdown
 {
-    @SerializedName ("timeremaining")
+    @SerializedName ("time_remaining")
     @Expose
     private long remainingTime;
 
-    @SerializedName ("labeltext")
+    @SerializedName ("label_text")
     @Expose
     private String label;
 
-    @SerializedName ("timerrunning")
+    @SerializedName ("timer_running")
     @Expose
     private boolean timerRunning;
 
-    @SerializedName ("positioninarray")
+    @SerializedName ("position_in_array")
     @Expose
     private int mPosition;
 
@@ -76,7 +75,7 @@ public class Countdown
     }
 
 
-    private void pauseResumeTimer ()
+    private void toggleTimer ()
     {
         if (!timerRunning) {
             resumeTimer ();
@@ -95,16 +94,7 @@ public class Countdown
             setupTimer ();
 
         mHandler.postDelayed (mRunnable, 1000);
-        //sendDataToMainActivity ();
     }
-
-    private void sendDataToMainActivity ()
-    {
-        Intent intent = new Intent();
-        intent.putExtra ("POSITION", mPosition);
-        intent.setAction("com.android.activity.SEND_DATA");
-    }
-
 
     private void pauseTimer ()
     {

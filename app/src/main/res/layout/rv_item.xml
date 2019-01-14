@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/small_margin"
     app:cardElevation="@dimen/small_margin">
 
     <RelativeLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
@@ -18,21 +19,23 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:ems="5"
             android:gravity="center"
             android:hint="@string/enterTimerName"
-            android:onClick="rvClick" />
+            android:importantForAutofill="no"
+            android:inputType="textCapWords"
+            android:onClick="rvClick"
+            tools:targetApi="o"/>
 
         <TextView
             android:id="@+id/textViewTimerTime"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/editTextTimerName"
-            android:ems="4"
+            android:layout_toStartOf="@+id/buttonStartStop"
             android:gravity="center"
             android:onClick="rvClick"
-            android:text="@string/timeRemaining" />
+            android:text="@string/timeRemaining"/>
 
         <ToggleButton
             android:id="@+id/buttonStartStop"
@@ -41,8 +44,8 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/buttonReset"
             android:onClick="rvClick"
-            android:textOff="Start"
-            android:textOn="Stop" />
+            android:textOff="@string/start"
+            android:textOn="@string/stop"/>
 
         <Button
             android:id="@+id/buttonReset"
@@ -51,7 +54,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:onClick="rvClick"
-            android:text="@string/reset" />
+            android:text="@string/reset"/>
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

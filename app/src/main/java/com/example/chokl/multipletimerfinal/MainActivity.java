@@ -1,10 +1,6 @@
 package com.example.chokl.multipletimerfinal;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,404 +35,378 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
 {
     private TimerRowsAdapter mTimerRowsAdapter;
-    private ArrayList<Countdown> countdowns;
+    private ArrayList<Countdown> mCountdowns;
     private View mSnackBarContainer;
     private Thread mThread;
     private boolean mPlaySound;
 
-    @Override
-    protected void onResume()
+
+    @Override protected void onDestroy ()
     {
-        super.onResume();
-        // registerReceiver (mReceiver, new IntentFilter("com.android.activity.SEND_DATA"));
+        // Remove all CD Handler callbacks and also interrupt/stop our Activity's "master" timer
+        stopAllRunningTimers ();
+        mThread.interrupt ();
+        super.onDestroy ();
+    }
+
+    private void stopAllRunningTimers ()
+    {
+        for (Countdown countdown : mCountdowns) {
+            if (countdown.isTimerRunning ()) {
+                countdown.setTimerRunning (false);
+            }
+        }
     }
 
     @Override
-    protected void onPause()
+    protected void onSaveInstanceState (Bundle outState)
     {
-        super.onPause();
-        //unregisterReceiver (mReceiver);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        Gson gson = new Gson();
-        Type cdType = new TypeToken<ArrayList<Countdown>>()
+        super.onSaveInstanceState (outState);
+        Gson gson = new Gson ();
+        Type cdType = new TypeToken<ArrayList<Countdown>> ()
         {
-        }.getType();
-        String serialized = gson.toJson(countdowns, cdType);
-        outState.putString("CDs", serialized);
+        }.getType ();
+        String serialized = gson.toJson (mCountdowns, cdType);
+        outState.putString ("CDs", serialized);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate (Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_main);
 
-        setupToolbar();
-        setupFAB();
-        mSnackBarContainer = findViewById(R.id.activityMain);
+        setupToolbar ();
+        setupFAB ();
+        mSnackBarContainer = findViewById (R.id.activityMain);
 
-        initCountdowns(savedInstanceState);
-        setupTimers();
+        initCountdowns (savedInstanceState);
+        setupTimers ();
 
-        mThread = new Thread()
+        setupActivityTimerThread ();
+        mThread.start ();
+    }
+
+    private void setupActivityTimerThread ()
+    {
+        mThread = new Thread ()
         {
             @Override
-            public void run()
+            public void run ()
             {
-                try
-                {
-                    while (!mThread.isInterrupted())
-                    {
-                        Thread.sleep(1000);
-                        runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                for (Countdown countdown : countdowns)
-                                {
-                                    if (countdown.isTimerRunning())
-                                    {
-                                        mTimerRowsAdapter.notifyItemChanged(countdown.getPosition());
-                                        checkTimeUp(countdown);
-                                    }
+                try {
+                    while (!mThread.isInterrupted ()) {
+                        Thread.sleep (1000);
+                        runOnUiThread (() -> {
+                            for (Countdown countdown : mCountdowns) {
+                                if (countdown.isTimerRunning ()) {
+                                    mTimerRowsAdapter.notifyItemChanged (countdown.getPosition ());
+                                    checkTimeUp (countdown);
                                 }
                             }
                         });
                     }
                 }
-                catch (InterruptedException e)
-                {
+                catch (InterruptedException ignored) {
                 }
             }
         };
-
-        mThread.start();
     }
 
-    private void checkTimeUp(Countdown countdown)
+    private void checkTimeUp (Countdown countdown)
     {
-        if (countdown.getRemainingTimeString().equals("00:00:00") && countdown.isTimerRunning())
-        {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), notification);
-            if (mPlaySound == true)
-            {
-                mp.start();
+        if (countdown.isTimerRunning () &&
+                countdown.getRemainingTimeString ().equals ("00:00:00")) {
+            Uri notification = RingtoneManager.getDefaultUri (RingtoneManager.TYPE_ALARM);
+            MediaPlayer mp = MediaPlayer.create (getApplicationContext (), notification);
+            if (mPlaySound) {
+                mp.start ();
             }
 
-            AlertDialog.Builder timeUp = new AlertDialog.Builder(this);
+            AlertDialog.Builder timeUp = new AlertDialog.Builder (this);
 
-            String title = !countdown.getLabel().isEmpty() ? countdown.getLabel() : "Timer";
+            String title = !countdown.getLabel ().isEmpty () ?
+                           countdown.getLabel () :
+                           "Timer " + (countdown.getPosition () + 1);
 
-            timeUp.setTitle(title);
-            timeUp.setMessage(title + " is done");
+            timeUp.setTitle (title);
+            timeUp.setMessage (title + " is done.");
 
-            timeUp.setPositiveButton("OK", new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    if (mPlaySound == true)
-                    {
-                       mp.stop();
-                    }
-                    resetTimer(countdown, countdown.getPosition());
+            timeUp.setPositiveButton ("OK", (dialog, which) -> {
+                if (mPlaySound) {
+                    mp.stop ();
                 }
+                resetTimer (countdown, countdown.getPosition ());
             });
-            timeUp.show();
+            timeUp.show ();
         }
     }
 
-    private void initCountdowns(Bundle savedInstanceState)
+    private void initCountdowns (Bundle savedInstanceState)
     {
-        if (savedInstanceState == null)
-        {
-            countdowns = new ArrayList<>();
-            createAndAddCountdownObject();
+        if (savedInstanceState == null) {
+            mCountdowns = new ArrayList<> ();
+            createAndAddCountdownObject ();
         }
-        else
-        {
-            Gson gson = new Gson();
-            Type cdType = new TypeToken<ArrayList<Countdown>>()
-            {
-            }.getType();
-            String serialized = savedInstanceState.getString("CDs");
-            countdowns = gson.fromJson(serialized, cdType);
+        else {
+            mCountdowns = getSavedListFromBundle (savedInstanceState);
+            // Although running/paused state of each CD is saved in the bundle, onDestroy stops all
+            restartTimerHandlersInActiveTimers ();
         }
     }
 
-    private void setupToolbar()
+    private ArrayList<Countdown> getSavedListFromBundle (Bundle savedInstanceState)
     {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Gson gson = new Gson ();
+        Type cdType = new TypeToken<ArrayList<Countdown>> ()
+        {
+        }.getType ();
+        String serialized = savedInstanceState.getString ("CDs");
+        return gson.fromJson (serialized, cdType);
     }
 
-    private void setupFAB()
+    private void restartTimerHandlersInActiveTimers ()
     {
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                createNewCountdown();
+        if (mCountdowns != null) {
+            for (Countdown current : mCountdowns) {
+                if (current.isTimerRunning ()) {
+                    current.setTimerRunning (true);
+                }
             }
-        });
+        }
+    }
+
+    private void setupToolbar ()
+    {
+        Toolbar toolbar = findViewById (R.id.toolbar);
+        setSupportActionBar (toolbar);
+    }
+
+    private void setupFAB ()
+    {
+        FloatingActionButton fab = findViewById (R.id.fab);
+        fab.setOnClickListener (view -> createNewCountdown ());
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    public boolean onCreateOptionsMenu (Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater ().inflate (R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    public boolean onOptionsItemSelected (MenuItem item)
     {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId ()) {
             case R.id.deleteAllTimers:
-                countdowns.clear();
-                createAndAddCountdownObject();
-                mTimerRowsAdapter.notifyDataSetChanged();
+                mCountdowns.clear ();
+                createAndAddCountdownObject ();
+                mTimerRowsAdapter.notifyDataSetChanged ();
                 break;
             case R.id.about:
-                Snackbar.make(mSnackBarContainer, R.string.about, Snackbar.LENGTH_LONG).show();
+                Snackbar.make (mSnackBarContainer, R.string.aboutBodyText, Snackbar.LENGTH_LONG)
+                        .show ();
                 break;
             case R.id.menuCheck:
-                toggleMenuItem(item);
+                toggleMenuItem (item);
                 mPlaySound = !mPlaySound;
                 break;
             default:
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected (item);
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected (item);
     }
 
-    private void toggleMenuItem(MenuItem item)
+    private void toggleMenuItem (MenuItem item)
     {
-        item.setChecked(!item.isChecked());
+        item.setChecked (!item.isChecked ());
     }
 
-    public void createNewCountdown()
+    private void createNewCountdown ()
     {
-        createAndAddCountdownObject();
-        mTimerRowsAdapter.notifyItemChanged(mTimerRowsAdapter.getItemCount() - 1);
+        createAndAddCountdownObject ();
+        mTimerRowsAdapter.notifyItemChanged (mTimerRowsAdapter.getItemCount () - 1);
     }
 
-    public void setupTimers()
+    private void setupTimers ()
     {
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(false);
-        mTimerRowsAdapter = new TimerRowsAdapter(countdowns);
+        RecyclerView recyclerView = findViewById (R.id.recyclerView);
+        recyclerView.setHasFixedSize (false);
+        mTimerRowsAdapter = new TimerRowsAdapter (mCountdowns);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager (this);
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mTimerRowsAdapter);
+        recyclerView.setLayoutManager (layoutManager);
+        recyclerView.setAdapter (mTimerRowsAdapter);
     }
 
-    private void createAndAddCountdownObject()
+    private void createAndAddCountdownObject ()
     {
-        Countdown countdown = new Countdown();
-        countdowns.add(countdown);
+        Countdown countdown = new Countdown ();
+        mCountdowns.add (countdown);
     }
 
-    public void rvClick(View view)
+    public void rvClick (View view)
     {
-        int position = Integer.parseInt(view.getTag().toString());
-        Countdown currentCountDown = mTimerRowsAdapter.getCountdownAt(position);
+        int position = Integer.parseInt (view.getTag ().toString ());
+        Countdown currentCountDown = mTimerRowsAdapter.getCountdownAt (position);
 
         // timer name (EditText) is handled in the adapter - no need to handle that here
-        if (view.getClass().equals(AppCompatTextView.class))//(view == mTimerTime)
+        if (view.getClass ().equals (AppCompatTextView.class))//(view == mTimerTime)
         {
-            inputTimerTimeLabel(currentCountDown, position);
+            inputTimerTimeLabel (currentCountDown, position);
         }
-        else if (view.getClass().equals(ToggleButton.class)) //(view == mStartStopButton)
+        else if (view.getClass ().equals (ToggleButton.class)) //(view == mStartStopButton)
         {
-            startStopTimer(currentCountDown, position);
+            startStopTimer (currentCountDown, position);
         }
-        else if (view.getId() == findViewById(R.id.buttonReset).getId()) //wasn't working to test class.equals(button) //(view == mResetButton)
+        else if (view.getClass ().equals (AppCompatButton.class)) //(view == mStartStopButton)
+        //else if (view.getId () == findViewById (R.id.buttonReset).getId ())  //(view == mResetButton)
         {
-            resetTimer(currentCountDown, position);
+            resetTimer (currentCountDown, position);
         }
 
-        mTimerRowsAdapter.notifyItemChanged(position);
+        mTimerRowsAdapter.notifyItemChanged (position);
     }
 
-    public void startStopTimer(Countdown countdown, final int position)
+    public void startStopTimer (Countdown countdown, final int position)
     {
-        if (countdown.getRemainingTime() > 0)
-        {
-            countdown.setTimerRunning(!countdown.isTimerRunning());
+        if (countdown.getRemainingTime () > 0) {
+            countdown.setTimerRunning (!countdown.isTimerRunning ());
         }
-        else
-        {
-            Toast.makeText(getApplicationContext(), countdown.getLabel() + " Timer is at 0", Toast.LENGTH_LONG).show();
+        else {
+            Toast.makeText (getApplicationContext (), countdown.getLabel () + " Timer is at 0",
+                            Toast.LENGTH_LONG).show ();
         }
-        mTimerRowsAdapter.notifyItemChanged(position);
+        mTimerRowsAdapter.notifyItemChanged (position);
     }
 
-    private void resetTimer(Countdown countdown, final int position)
+    private void resetTimer (Countdown countdown, final int position)
     {
-        Countdown countdownNew = new Countdown();
-        countdowns.set(countdown.getPosition(), countdownNew);
+        Countdown countdownNew = new Countdown ();
+        mCountdowns.set (countdown.getPosition (), countdownNew);
 
-        mTimerRowsAdapter.notifyItemChanged(position);
+        mTimerRowsAdapter.notifyItemChanged (position);
     }
 
-    public void inputTimerTimeLabel(Countdown cd, final int position)
+    public void inputTimerTimeLabel (Countdown cd, final int position)
     {
         final Countdown countdown = cd;
 
-        AlertDialog.Builder inputTimeAlert = new AlertDialog.Builder(this);
-        inputTimeAlert.setTitle("Enter the time");
+        AlertDialog.Builder inputTimeAlert = new AlertDialog.Builder (this);
+        inputTimeAlert.setTitle ("Enter the time");
 
-        final EditText timeHoursInput = new EditText(this);
-        timeHoursInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-        final EditText timeMinutesInput = new EditText(this);
-        timeMinutesInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-        final EditText timeSecondsInput = new EditText(this);
-        timeSecondsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-        final TextView colon1 = new TextView(this);
-        colon1.setText(":");
-        final TextView colon2 = new TextView(this);
-        colon2.setText(":");
+        final EditText timeHoursInput = new EditText (this);
+        timeHoursInput.setInputType (InputType.TYPE_CLASS_NUMBER);
+        final EditText timeMinutesInput = new EditText (this);
+        timeMinutesInput.setInputType (InputType.TYPE_CLASS_NUMBER);
+        final EditText timeSecondsInput = new EditText (this);
+        timeSecondsInput.setInputType (InputType.TYPE_CLASS_NUMBER);
+        final TextView colon1 = new TextView (this);
+        colon1.setText (":");
+        final TextView colon2 = new TextView (this);
+        colon2.setText (":");
 
         final int maxLength = 2;
-        timeHoursInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
-        timeMinutesInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
-        timeSecondsInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
-        timeHoursInput.setFilters(new InputFilter[]{new InputFilterMinMax("0", "23")});
-        timeMinutesInput.setFilters(new InputFilter[]{new InputFilterMinMax("0", "59")});
-        timeSecondsInput.setFilters(new InputFilter[]{new InputFilterMinMax("0", "59")});
+        timeHoursInput.setFilters (new InputFilter[] {new InputFilter.LengthFilter (maxLength)});
+        timeMinutesInput.setFilters (new InputFilter[] {new InputFilter.LengthFilter (maxLength)});
+        timeSecondsInput.setFilters (new InputFilter[] {new InputFilter.LengthFilter (maxLength)});
+        timeHoursInput.setFilters (new InputFilter[] {new InputFilterMinMax ("0", "23")});
+        timeMinutesInput.setFilters (new InputFilter[] {new InputFilterMinMax ("0", "59")});
+        timeSecondsInput.setFilters (new InputFilter[] {new InputFilterMinMax ("0", "59")});
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
-        layout.addView(timeHoursInput);
-        layout.addView(colon1);
-        layout.addView(timeMinutesInput);
-        layout.addView(colon2);
-        layout.addView(timeSecondsInput);
+        LinearLayout layout = new LinearLayout (this);
+        layout.setOrientation (LinearLayout.HORIZONTAL);
+        layout.setHorizontalGravity (Gravity.CENTER_HORIZONTAL);
+        layout.addView (timeHoursInput);
+        layout.addView (colon1);
+        layout.addView (timeMinutesInput);
+        layout.addView (colon2);
+        layout.addView (timeSecondsInput);
 
-        inputTimeAlert.setView(layout);
+        inputTimeAlert.setView (layout);
 
-        inputTimeAlert.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                String hours = "00";
-                if (!timeHoursInput.getText().toString().isEmpty())
-                {
-                    if (timeHoursInput.getText().toString().length() == 1)
-                    {
-                        hours = "0" + timeHoursInput.getText().toString();
-                    }
-                    else
-                    {
-                        hours = timeHoursInput.getText().toString();
-                    }
+        inputTimeAlert.setPositiveButton ("OK", (dialog, which) -> {
+            String hours = "00";
+            if (!timeHoursInput.getText ().toString ().isEmpty ()) {
+                if (timeHoursInput.getText ().toString ().length () == 1) {
+                    hours = "0" + timeHoursInput.getText ().toString ();
                 }
-                String minutes = "00";
-                if (!timeMinutesInput.getText().toString().isEmpty())
-                {
-                    if (timeMinutesInput.getText().toString().length() == 1)
-                    {
-                        minutes = "0" + timeMinutesInput.getText().toString();
-                    }
-                    else
-                    {
-                        minutes = timeMinutesInput.getText().toString();
-                    }
+                else {
+                    hours = timeHoursInput.getText ().toString ();
                 }
-                String seconds = "00";
-                if (!timeSecondsInput.getText().toString().isEmpty())
-                {
-                    if (timeSecondsInput.getText().toString().length() == 1)
-                    {
-                        seconds = "0" + timeSecondsInput.getText().toString();
-                    }
-                    else
-                    {
-                        seconds = timeSecondsInput.getText().toString();
-                    }
-                }
-
-                // first reset time to zero, then add each of the hours, minutes and seconds
-                countdown.setRemainingTime(0);
-                countdown.addHours(Long.parseLong(hours));
-                countdown.addMinutes(Long.parseLong(minutes));
-                countdown.addSeconds(Long.parseLong(seconds));
-
-                // This update has to be here, not in the calling method, or else it runs before the dialog sends the new time here
-                mTimerRowsAdapter.notifyItemChanged(position);
             }
+            String minutes = "00";
+            if (!timeMinutesInput.getText ().toString ().isEmpty ()) {
+                if (timeMinutesInput.getText ().toString ().length () == 1) {
+                    minutes = "0" + timeMinutesInput.getText ().toString ();
+                }
+                else {
+                    minutes = timeMinutesInput.getText ().toString ();
+                }
+            }
+            String seconds = "00";
+            if (!timeSecondsInput.getText ().toString ().isEmpty ()) {
+                if (timeSecondsInput.getText ().toString ().length () == 1) {
+                    seconds = "0" + timeSecondsInput.getText ().toString ();
+                }
+                else {
+                    seconds = timeSecondsInput.getText ().toString ();
+                }
+            }
+
+            // first reset time to zero, then add each of the hours, minutes and seconds
+            countdown.setRemainingTime (0);
+            countdown.addHours (Long.parseLong (hours));
+            countdown.addMinutes (Long.parseLong (minutes));
+            countdown.addSeconds (Long.parseLong (seconds));
+
+            // This update has to be here, not in the calling method
+            // Otherwise, it runs before the dialog sends the new time here
+            mTimerRowsAdapter.notifyItemChanged (position);
         });
 
-        inputTimeAlert.show();
+        inputTimeAlert.show ();
     }
 
     public class InputFilterMinMax implements InputFilter
     {
         //input filter taken from https://acomputerengineer.wordpress.com/2015/12/16/limit-number-range-in-edittext-in-android-using-inputfilter/
+        private final int min;
+        private final int max;
 
-        private int min, max;
-
-        public InputFilterMinMax(int min, int max)
+        public InputFilterMinMax (int min, int max)
         {
             this.min = min;
             this.max = max;
         }
 
-        public InputFilterMinMax(String min, String max)
+        public InputFilterMinMax (String min, String max)
         {
-            this.min = Integer.parseInt(min);
-            this.max = Integer.parseInt(max);
+            this.min = Integer.parseInt (min);
+            this.max = Integer.parseInt (max);
         }
 
-        private boolean isInRange(int a, int b, int c)
+        private boolean isInRange (int a, int b, int c)
         {
             return b > a ? c >= a && c <= b : c >= b && c <= a;
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
-                                   int dstart, int dend)
+        public CharSequence filter (CharSequence source, int start, int end, Spanned dest,
+                                    int dStart, int dEnd)
         {
-            try
-            {
-                int input = Integer.parseInt(dest.toString() + source.toString());
-                if (isInRange(min, max, input))
-                {
+            try {
+                int input = Integer.parseInt (dest.toString () + source.toString ());
+                if (isInRange (min, max, input)) {
                     return null;
                 }
             }
-            catch (NumberFormatException nfe)
-            {
+            catch (NumberFormatException ignored) {
             }
             return "";
         }
 
-    }
-
-    private class PositionReceiver extends BroadcastReceiver
-    {
-
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            int message = intent.getIntExtra("POSITION", 0);
-            mTimerRowsAdapter.notifyItemChanged(message);
-
-        }
     }
 }
